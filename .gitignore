@@ -1,0 +1,12 @@
+.env
+*.key
+.venv/
+venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+data/*
+!data/README.md
+.DS_Store
+.idea/
+.vscode/

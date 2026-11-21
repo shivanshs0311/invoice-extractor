@@ -1,0 +1,226 @@
+{
+  "output": {
+    "is_invoice": true,
+    "vendor": "Meridian Print & Pack LLP",
+    "invoice_number": "MPP-2026-0207",
+    "invoice_date": "2026-02-17",
+    "currency": "INR",
+    "line_items": [
+      {
+        "description": "Corrugated box 12x9x6 in (3-ply)",
+        "quantity": 500,
+        "amount": 9250.0
+      },
+      {
+        "description": "Corrugated box 16x12x8 in (3-ply)",
+        "quantity": 400,
+        "amount": 10700.0
+      },
+      {
+        "description": "Corrugated box 20x16x12 in (5-ply)",
+        "quantity": 250,
+        "amount": 14500.0
+      },
+      {
+        "description": "Mailer box 10x8x3 in, kraft",
+        "quantity": 600,
+        "amount": 8520.0
+      },
+      {
+        "description": "Mailer box 12x10x4 in, white",
+        "quantity": 600,
+        "amount": 10740.0
+      },
+      {
+        "description": "Bubble wrap roll 1m x 100m",
+        "quantity": 30,
+        "amount": 35400.0
+      },
+      {
+        "description": "BOPP packing tape 48mm x 100m",
+        "quantity": 240,
+        "amount": 11040.0
+      },
+      {
+        "description": "BOPP packing tape 48mm x 50m, printed",
+        "quantity": 120,
+        "amount": 4740.0
+      },
+      {
+        "description": "Stretch film 500mm x 300m",
+        "quantity": 60,
+        "amount": 24600.0
+      },
+      {
+        "description": "Edge protector 50x50x3mm, 1m",
+        "quantity": 800,
+        "amount": 6240.0
+      },
+      {
+        "description": "Paper void fill roll 380mm x 300m",
+        "quantity": 24,
+        "amount": 16560.0
+      },
+      {
+        "description": "Foam sheet 2mm, 1m x 50m",
+        "quantity": 16,
+        "amount": 21200.0
+      },
+      {
+        "description": "Zip pouch 6x9 in (pack of 100)",
+        "quantity": 80,
+        "amount": 7360.0
+      },
+      {
+        "description": "Zip pouch 9x12 in (pack of 100)",
+        "quantity": 80,
+        "amount": 11040.0
+      },
+      {
+        "description": "Tamper-evident bag 12x15 in (pack of 100)",
+        "quantity": 50,
+        "amount": 10750.0
+      },
+      {
+        "description": "Thermal label roll 100x150mm",
+        "quantity": 90,
+        "amount": 15120.0
+      },
+      {
+        "description": "Barcode label A4 sheet (pack of 100)",
+        "quantity": 35,
+        "amount": 10850.0
+      },
+      {
+        "description": "Fragile sticker roll (500)",
+        "quantity": 40,
+        "amount": 5040.0
+      },
+      {
+        "description": "Corrugated divider set 12-cell",
+        "quantity": 300,
+        "amount": 6420.0
+      },
+      {
+        "description": "Carton sealing gun",
+        "quantity": 6,
+        "amount": 3840.0
+      },
+      {
+        "description": "Pallet wrap dispenser",
+        "quantity": 8,
+        "amount": 3880.0
+      },
+      {
+        "description": "Custom print setup charge",
+        "quantity": 1,
+        "amount": 4500.0
+      },
+      {
+        "description": "Die-cut tooling charge (one-time)",
+        "quantity": 1,
+        "amount": 9800.0
+      },
+      {
+        "description": "Freight, Pune to Nashik (part load)",
+        "quantity": 1,
+        "amount": 6200.0
+      }
+    ],
+    "tax_total": 32194.8,
+    "total": 300484.8,
+    "needs_review": false,
+    "review_reasons": []
+  },
+  "meta": {
+    "status": "ok",
+    "source_type": "scanned_pdf",
+    "final_mode": "vision",
+    "model": "gemini-3.5-flash-lite",
+    "document_type": "invoice",
+    "legibility": "good",
+    "model_confidence": 1.0,
+    "notes": null,
+    "checks": [
+      {
+        "name": "document_type_consistent",
+        "ok": true,
+        "severity": "error",
+        "detail": ""
+      },
+      {
+        "name": "core_fields_present",
+        "ok": true,
+        "severity": "error",
+        "detail": ""
+      },
+      {
+        "name": "currency_known",
+        "ok": true,
+        "severity": "warn",
+        "detail": ""
+      },
+      {
+        "name": "date_plausible",
+        "ok": true,
+        "severity": "warn",
+        "detail": ""
+      },
+      {
+        "name": "tax_plausible",
+        "ok": true,
+        "severity": "warn",
+        "detail": ""
+      },
+      {
+        "name": "totals_reconcile",
+        "ok": true,
+        "severity": "error",
+        "detail": "sum(line amounts)=268290.00 + tax_total=32194.80 = 300484.80; total=300484.80; difference=0.00; tolerance=1.00"
+      },
+      {
+        "name": "legibility_good",
+        "ok": true,
+        "severity": "warn",
+        "detail": ""
+      },
+      {
+        "name": "confidence_ok",
+        "ok": true,
+        "severity": "warn",
+        "detail": ""
+      },
+      {
+        "name": "input_quality_ok",
+        "ok": true,
+        "severity": "warn",
+        "detail": ""
+      }
+    ],
+    "attempts": [
+      {
+        "attempt": 1,
+        "mode": "vision",
+        "model": "gemini-3.5-flash-lite",
+        "status": "ok",
+        "input_tokens": 3345,
+        "output_tokens": 1275,
+        "cost_usd": 0.004191,
+        "latency_s": 4.228,
+        "api_retries": 2,
+        "failed_checks": [],
+        "normalised": [],
+        "error": null
+      }
+    ],
+    "input_tokens": 3345,
+    "output_tokens": 1275,
+    "cost_usd": 0.004191,
+    "latency_s": 88.013,
+    "warnings": [],
+    "prompt_version": "v1",
+    "prompt_sha": "26befab048",
+    "error": null,
+    "normalisations": []
+  }
+}

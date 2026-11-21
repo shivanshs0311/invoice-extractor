@@ -1,0 +1,141 @@
+{
+  "output": {
+    "is_invoice": null,
+    "vendor": null,
+    "invoice_number": null,
+    "invoice_date": null,
+    "currency": null,
+    "line_items": null,
+    "tax_total": null,
+    "total": null,
+    "needs_review": true,
+    "review_reasons": [
+      "extraction_failed:unreadable_document"
+    ],
+    "error": {
+      "code": "unreadable_document",
+      "message": "The model rates this scan as poor and its result is not trustworthy (is_invoice=True, confidence=0.00, failed checks: ['core_fields_present']). Send a clearer scan."
+    }
+  },
+  "meta": {
+    "status": "failed",
+    "source_type": "scanned_pdf",
+    "final_mode": "vision",
+    "model": "gemini-3.5-flash-lite",
+    "document_type": "invoice",
+    "legibility": "poor",
+    "model_confidence": 0.0,
+    "notes": "The document images are extremely blurry and unreadable, making it impossible to extract any valid fields.",
+    "checks": [
+      {
+        "name": "document_type_consistent",
+        "ok": true,
+        "severity": "error",
+        "detail": ""
+      },
+      {
+        "name": "core_fields_present",
+        "ok": false,
+        "severity": "error",
+        "detail": "missing: ['vendor', 'invoice_number', 'invoice_date', 'total', 'line_items']"
+      },
+      {
+        "name": "currency_known",
+        "ok": false,
+        "severity": "warn",
+        "detail": "currency is None, not a recognised ISO 4217 code"
+      },
+      {
+        "name": "totals_unverifiable",
+        "ok": false,
+        "severity": "warn",
+        "detail": "need both a total and at least one line item to reconcile"
+      },
+      {
+        "name": "legibility_good",
+        "ok": false,
+        "severity": "warn",
+        "detail": "model reports legibility=poor"
+      },
+      {
+        "name": "confidence_ok",
+        "ok": false,
+        "severity": "warn",
+        "detail": "model confidence 0.00 < 0.70"
+      },
+      {
+        "name": "input_quality_ok",
+        "ok": true,
+        "severity": "warn",
+        "detail": ""
+      }
+    ],
+    "attempts": [
+      {
+        "attempt": 1,
+        "mode": "vision",
+        "model": "gemini-3.5-flash-lite",
+        "status": "checks_failed",
+        "input_tokens": 3345,
+        "output_tokens": 119,
+        "cost_usd": 0.001301,
+        "latency_s": 1.55,
+        "api_retries": 0,
+        "failed_checks": [
+          "core_fields_present",
+          "currency_known",
+          "totals_unverifiable",
+          "legibility_good",
+          "confidence_ok"
+        ],
+        "normalised": [],
+        "error": null
+      },
+      {
+        "attempt": 2,
+        "mode": "vision",
+        "model": "gemini-3.5-flash",
+        "status": "api_error",
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cost_usd": null,
+        "latency_s": 0.0,
+        "api_retries": 0,
+        "failed_checks": [],
+        "normalised": [],
+        "error": "quota: Daily quota exhausted for this model (429). It resets at midnight Pacific time. Use another model or key. Details: 429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://aistudio.google.com/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Q"
+      },
+      {
+        "attempt": 3,
+        "mode": "vision",
+        "model": "gemini-3.5-flash-lite",
+        "status": "checks_failed",
+        "input_tokens": 3541,
+        "output_tokens": 122,
+        "cost_usd": 0.0013673,
+        "latency_s": 3.801,
+        "api_retries": 0,
+        "failed_checks": [
+          "core_fields_present",
+          "currency_known",
+          "totals_unverifiable",
+          "legibility_good",
+          "confidence_ok"
+        ],
+        "normalised": [],
+        "error": null
+      }
+    ],
+    "input_tokens": 6886,
+    "output_tokens": 241,
+    "cost_usd": 0.0026683,
+    "latency_s": 5.826,
+    "warnings": [],
+    "prompt_version": "v1",
+    "prompt_sha": "26befab048",
+    "error": {
+      "code": "unreadable_document",
+      "message": "The model rates this scan as poor and its result is not trustworthy (is_invoice=True, confidence=0.00, failed checks: ['core_fields_present']). Send a clearer scan."
+    }
+  }
+}

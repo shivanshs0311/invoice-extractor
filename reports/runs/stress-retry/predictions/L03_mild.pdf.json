@@ -1,0 +1,126 @@
+{
+  "output": {
+    "is_invoice": true,
+    "vendor": "Kaveri Office Mart Pvt Ltd",
+    "invoice_number": "KOM/26-27/00418",
+    "invoice_date": "2026-06-23",
+    "currency": "INR",
+    "line_items": [
+      {
+        "description": "A4 copier paper 75 GSM (ream)",
+        "quantity": 40,
+        "amount": 11560.0
+      },
+      {
+        "description": "Whiteboard markers (box of 10)",
+        "quantity": 12,
+        "amount": 2580.0
+      },
+      {
+        "description": "Ergonomic mesh office chair",
+        "quantity": 6,
+        "amount": 38700.0
+      },
+      {
+        "description": "Heavy-duty stapler",
+        "quantity": 4,
+        "amount": 1540.0
+      }
+    ],
+    "tax_total": 9788.4,
+    "total": 64168.4,
+    "needs_review": false,
+    "review_reasons": []
+  },
+  "meta": {
+    "status": "ok",
+    "source_type": "scanned_pdf",
+    "final_mode": "vision",
+    "model": "gemini-3.5-flash-lite",
+    "document_type": "invoice",
+    "legibility": "good",
+    "model_confidence": 1.0,
+    "notes": null,
+    "checks": [
+      {
+        "name": "document_type_consistent",
+        "ok": true,
+        "severity": "error",
+        "detail": ""
+      },
+      {
+        "name": "core_fields_present",
+        "ok": true,
+        "severity": "error",
+        "detail": ""
+      },
+      {
+        "name": "currency_known",
+        "ok": true,
+        "severity": "warn",
+        "detail": ""
+      },
+      {
+        "name": "date_plausible",
+        "ok": true,
+        "severity": "warn",
+        "detail": ""
+      },
+      {
+        "name": "tax_plausible",
+        "ok": true,
+        "severity": "warn",
+        "detail": ""
+      },
+      {
+        "name": "totals_reconcile",
+        "ok": true,
+        "severity": "error",
+        "detail": "sum(line amounts)=54380.00 + tax_total=9788.40 = 64168.40; total=64168.40; difference=0.00; tolerance=1.00"
+      },
+      {
+        "name": "legibility_good",
+        "ok": true,
+        "severity": "warn",
+        "detail": ""
+      },
+      {
+        "name": "confidence_ok",
+        "ok": true,
+        "severity": "warn",
+        "detail": ""
+      },
+      {
+        "name": "input_quality_ok",
+        "ok": true,
+        "severity": "warn",
+        "detail": ""
+      }
+    ],
+    "attempts": [
+      {
+        "attempt": 1,
+        "mode": "vision",
+        "model": "gemini-3.5-flash-lite",
+        "status": "ok",
+        "input_tokens": 2245,
+        "output_tokens": 316,
+        "cost_usd": 0.0014635,
+        "latency_s": 36.53,
+        "api_retries": 0,
+        "failed_checks": [],
+        "normalised": [],
+        "error": null
+      }
+    ],
+    "input_tokens": 2245,
+    "output_tokens": 316,
+    "cost_usd": 0.0014635,
+    "latency_s": 36.602,
+    "warnings": [],
+    "prompt_version": "v1",
+    "prompt_sha": "26befab048",
+    "error": null,
+    "normalisations": []
+  }
+}

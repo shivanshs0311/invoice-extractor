@@ -1,0 +1,136 @@
+{
+  "output": {
+    "is_invoice": true,
+    "vendor": "Shree Ganesh Stationers",
+    "invoice_number": "SGS/1847",
+    "invoice_date": "2026-08-19",
+    "currency": "INR",
+    "line_items": [
+      {
+        "description": "Exam pad A4 (200 pages)",
+        "quantity": 150,
+        "amount": 8700.0
+      },
+      {
+        "description": "Ball pen blue (box of 50)",
+        "quantity": 20,
+        "amount": 4800.0
+      },
+      {
+        "description": "Whiteboard duster",
+        "quantity": 10,
+        "amount": 350.0
+      },
+      {
+        "description": "Chart paper white (pack of 20)",
+        "quantity": 25,
+        "amount": 3000.0
+      },
+      {
+        "description": "Stapler pin No.10 (box)",
+        "quantity": 40,
+        "amount": 560.0
+      },
+      {
+        "description": "File folder, plastic",
+        "quantity": 100,
+        "amount": 2200.0
+      }
+    ],
+    "tax_total": 3529.8,
+    "total": 23139.8,
+    "needs_review": false,
+    "review_reasons": []
+  },
+  "meta": {
+    "status": "ok",
+    "source_type": "scanned_pdf",
+    "final_mode": "vision",
+    "model": "gemini-3.5-flash-lite",
+    "document_type": "invoice",
+    "legibility": "good",
+    "model_confidence": 1.0,
+    "notes": "Indian tax invoice with CGST and SGST at 9% each.",
+    "checks": [
+      {
+        "name": "document_type_consistent",
+        "ok": true,
+        "severity": "error",
+        "detail": ""
+      },
+      {
+        "name": "core_fields_present",
+        "ok": true,
+        "severity": "error",
+        "detail": ""
+      },
+      {
+        "name": "currency_known",
+        "ok": true,
+        "severity": "warn",
+        "detail": ""
+      },
+      {
+        "name": "date_plausible",
+        "ok": true,
+        "severity": "warn",
+        "detail": ""
+      },
+      {
+        "name": "tax_plausible",
+        "ok": true,
+        "severity": "warn",
+        "detail": ""
+      },
+      {
+        "name": "totals_reconcile",
+        "ok": true,
+        "severity": "error",
+        "detail": "sum(line amounts)=19610.00 + tax_total=3529.80 = 23139.80; total=23139.80; difference=0.00; tolerance=1.00"
+      },
+      {
+        "name": "legibility_good",
+        "ok": true,
+        "severity": "warn",
+        "detail": ""
+      },
+      {
+        "name": "confidence_ok",
+        "ok": true,
+        "severity": "warn",
+        "detail": ""
+      },
+      {
+        "name": "input_quality_ok",
+        "ok": true,
+        "severity": "warn",
+        "detail": ""
+      }
+    ],
+    "attempts": [
+      {
+        "attempt": 1,
+        "mode": "vision",
+        "model": "gemini-3.5-flash-lite",
+        "status": "ok",
+        "input_tokens": 2245,
+        "output_tokens": 406,
+        "cost_usd": 0.0016885,
+        "latency_s": 41.347,
+        "api_retries": 0,
+        "failed_checks": [],
+        "normalised": [],
+        "error": null
+      }
+    ],
+    "input_tokens": 2245,
+    "output_tokens": 406,
+    "cost_usd": 0.0016885,
+    "latency_s": 41.424,
+    "warnings": [],
+    "prompt_version": "v1",
+    "prompt_sha": "26befab048",
+    "error": null,
+    "normalisations": []
+  }
+}

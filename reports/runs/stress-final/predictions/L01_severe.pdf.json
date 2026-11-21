@@ -1,0 +1,150 @@
+{
+  "output": {
+    "is_invoice": null,
+    "vendor": null,
+    "invoice_number": null,
+    "invoice_date": null,
+    "currency": null,
+    "line_items": null,
+    "tax_total": null,
+    "total": null,
+    "needs_review": true,
+    "review_reasons": [
+      "extraction_failed:unreadable_document"
+    ],
+    "error": {
+      "code": "unreadable_document",
+      "message": "The model rates this scan as poor and its result is not trustworthy (is_invoice=True, confidence=0.60, failed checks: none). Send a clearer scan."
+    }
+  },
+  "meta": {
+    "status": "failed",
+    "source_type": "scanned_pdf",
+    "final_mode": "vision",
+    "model": "gemini-3.5-flash-lite",
+    "document_type": "invoice",
+    "legibility": "poor",
+    "model_confidence": 0.6,
+    "notes": "The document is somewhat blurry, but vendor, invoice number, date, and line items are discernible upon close inspection.",
+    "checks": [
+      {
+        "name": "document_type_consistent",
+        "ok": true,
+        "severity": "error",
+        "detail": ""
+      },
+      {
+        "name": "core_fields_present",
+        "ok": true,
+        "severity": "error",
+        "detail": ""
+      },
+      {
+        "name": "currency_known",
+        "ok": true,
+        "severity": "warn",
+        "detail": ""
+      },
+      {
+        "name": "date_plausible",
+        "ok": true,
+        "severity": "warn",
+        "detail": ""
+      },
+      {
+        "name": "tax_plausible",
+        "ok": true,
+        "severity": "warn",
+        "detail": ""
+      },
+      {
+        "name": "totals_reconcile",
+        "ok": true,
+        "severity": "error",
+        "detail": "sum(line amounts)=1044.50 + tax_total=208.80 = 1253.30; total=1253.30; difference=0.00; tolerance=1.00"
+      },
+      {
+        "name": "legibility_good",
+        "ok": false,
+        "severity": "warn",
+        "detail": "model reports legibility=poor"
+      },
+      {
+        "name": "confidence_ok",
+        "ok": false,
+        "severity": "warn",
+        "detail": "model confidence 0.60 < 0.70"
+      },
+      {
+        "name": "input_quality_ok",
+        "ok": true,
+        "severity": "warn",
+        "detail": ""
+      }
+    ],
+    "attempts": [
+      {
+        "attempt": 1,
+        "mode": "vision",
+        "model": "gemini-3.5-flash-lite",
+        "status": "checks_failed",
+        "input_tokens": 2245,
+        "output_tokens": 120,
+        "cost_usd": 0.0009735,
+        "latency_s": 2.718,
+        "api_retries": 0,
+        "failed_checks": [
+          "core_fields_present",
+          "currency_known",
+          "totals_unverifiable",
+          "legibility_good",
+          "confidence_ok"
+        ],
+        "normalised": [],
+        "error": null
+      },
+      {
+        "attempt": 2,
+        "mode": "vision",
+        "model": "gemini-3.5-flash",
+        "status": "api_error",
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cost_usd": null,
+        "latency_s": 0.0,
+        "api_retries": 0,
+        "failed_checks": [],
+        "normalised": [],
+        "error": "quota: Daily quota exhausted for this model (429). It resets at midnight Pacific time. Use another model or key. Details: 429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://aistudio.google.com/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Q"
+      },
+      {
+        "attempt": 3,
+        "mode": "vision",
+        "model": "gemini-3.5-flash-lite",
+        "status": "ok",
+        "input_tokens": 2442,
+        "output_tokens": 314,
+        "cost_usd": 0.0015176,
+        "latency_s": 1.769,
+        "api_retries": 0,
+        "failed_checks": [
+          "legibility_good",
+          "confidence_ok"
+        ],
+        "normalised": [],
+        "error": null
+      }
+    ],
+    "input_tokens": 4687,
+    "output_tokens": 434,
+    "cost_usd": 0.0024911,
+    "latency_s": 4.945,
+    "warnings": [],
+    "prompt_version": "v1",
+    "prompt_sha": "26befab048",
+    "error": {
+      "code": "unreadable_document",
+      "message": "The model rates this scan as poor and its result is not trustworthy (is_invoice=True, confidence=0.60, failed checks: none). Send a clearer scan."
+    }
+  }
+}

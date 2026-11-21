@@ -1,0 +1,166 @@
+{
+  "output": {
+    "is_invoice": true,
+    "vendor": "Arvind & Co",
+    "invoice_number": "AC-2023-0349",
+    "invoice_date": "2023-04-05",
+    "currency": "INR",
+    "line_items": [
+      {
+        "description": "Cotton medium men's shirt",
+        "quantity": 1,
+        "amount": 1200.0
+      },
+      {
+        "description": "Slim fit men's formal trousers",
+        "quantity": 1,
+        "amount": 1800.0
+      },
+      {
+        "description": "Men's cotton polo t-shirt",
+        "quantity": 1,
+        "amount": 800.0
+      },
+      {
+        "description": "Full-sleeve printed cotton kurta",
+        "quantity": 1,
+        "amount": 1500.0
+      }
+    ],
+    "tax_total": 530.0,
+    "total": 5830.0,
+    "needs_review": true,
+    "review_reasons": [
+      "legibility_good",
+      "confidence_ok"
+    ]
+  },
+  "meta": {
+    "status": "needs_review",
+    "source_type": "scanned_pdf",
+    "final_mode": "vision",
+    "model": "gemini-3.5-flash-lite",
+    "document_type": "invoice",
+    "legibility": "poor",
+    "model_confidence": 0.4,
+    "notes": "The document image is very blurry, vendor name and line items extracted as best as possible from the faint text.",
+    "checks": [
+      {
+        "name": "document_type_consistent",
+        "ok": true,
+        "severity": "error",
+        "detail": ""
+      },
+      {
+        "name": "core_fields_present",
+        "ok": true,
+        "severity": "error",
+        "detail": ""
+      },
+      {
+        "name": "currency_known",
+        "ok": true,
+        "severity": "warn",
+        "detail": ""
+      },
+      {
+        "name": "date_plausible",
+        "ok": true,
+        "severity": "warn",
+        "detail": ""
+      },
+      {
+        "name": "tax_plausible",
+        "ok": true,
+        "severity": "warn",
+        "detail": ""
+      },
+      {
+        "name": "totals_reconcile",
+        "ok": true,
+        "severity": "error",
+        "detail": "sum(line amounts)=5300.00 + tax_total=530.00 = 5830.00; total=5830.00; difference=0.00; tolerance=1.00"
+      },
+      {
+        "name": "legibility_good",
+        "ok": false,
+        "severity": "warn",
+        "detail": "model reports legibility=poor"
+      },
+      {
+        "name": "confidence_ok",
+        "ok": false,
+        "severity": "warn",
+        "detail": "model confidence 0.40 < 0.70"
+      },
+      {
+        "name": "input_quality_ok",
+        "ok": true,
+        "severity": "warn",
+        "detail": ""
+      }
+    ],
+    "attempts": [
+      {
+        "attempt": 1,
+        "mode": "vision",
+        "model": "gemini-3.5-flash-lite",
+        "status": "checks_failed",
+        "input_tokens": 2245,
+        "output_tokens": 123,
+        "cost_usd": 0.000981,
+        "latency_s": 2.96,
+        "api_retries": 0,
+        "failed_checks": [
+          "core_fields_present",
+          "currency_known",
+          "totals_unverifiable",
+          "legibility_good",
+          "confidence_ok"
+        ],
+        "normalised": [],
+        "error": null
+      },
+      {
+        "attempt": 2,
+        "mode": "vision",
+        "model": "gemini-3.5-flash",
+        "status": "api_error",
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cost_usd": null,
+        "latency_s": 0.0,
+        "api_retries": 0,
+        "failed_checks": [],
+        "normalised": [],
+        "error": "quota: Daily quota exhausted for this model (429). It resets at midnight Pacific time. Use another model or key. Details: 429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://aistudio.google.com/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Q"
+      },
+      {
+        "attempt": 3,
+        "mode": "vision",
+        "model": "gemini-3.5-flash-lite",
+        "status": "ok",
+        "input_tokens": 2445,
+        "output_tokens": 324,
+        "cost_usd": 0.0015435,
+        "latency_s": 3.937,
+        "api_retries": 2,
+        "failed_checks": [
+          "legibility_good",
+          "confidence_ok"
+        ],
+        "normalised": [],
+        "error": null
+      }
+    ],
+    "input_tokens": 4690,
+    "output_tokens": 447,
+    "cost_usd": 0.0025245,
+    "latency_s": 25.53,
+    "warnings": [],
+    "prompt_version": "v1",
+    "prompt_sha": "26befab048",
+    "error": null,
+    "normalisations": []
+  }
+}

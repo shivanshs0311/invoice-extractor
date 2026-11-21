@@ -1,0 +1,17 @@
+{
+  "_note": "USD per million tokens (MTok), list prices for the paid API. On the free tier you are billed $0, but the report still states cost at list price. Sources checked 2026-11-21: Google launch posts and ai.google.dev pricing as quoted by third parties. Re-check before quoting, prices change. Thinking tokens are billed as output tokens. gemini-3.6-flash has an introductory price of 0.75 / 3.75 until 2026-12-31 on Vertex, standard price shown here.",
+  "models": {
+    "gemini-3.5-flash-lite": {
+      "input": 0.30,
+      "output": 2.50
+    },
+    "gemini-3.5-flash": {
+      "input": 1.50,
+      "output": 9.00
+    },
+    "gemini-3.6-flash": {
+      "input": 1.50,
+      "output": 7.50
+    }
+  }
+}

@@ -1,0 +1,131 @@
+{
+  "output": {
+    "is_invoice": true,
+    "vendor": "Metro Auto Parts",
+    "invoice_number": "MAP/D/09-0312",
+    "invoice_date": "2026-09-03",
+    "currency": "INR",
+    "line_items": [
+      {
+        "description": "Brake pad set, front (sedan)",
+        "quantity": 8,
+        "amount": 14800.0
+      },
+      {
+        "description": "Air filter element",
+        "quantity": 12,
+        "amount": 5040.0
+      },
+      {
+        "description": "Wiper blade 20 in (pair)",
+        "quantity": 15,
+        "amount": 5700.0
+      },
+      {
+        "description": "Engine oil 5W-30, 4 L can",
+        "quantity": 20,
+        "amount": 39200.0
+      },
+      {
+        "description": "Coolant concentrate, 1 L",
+        "quantity": 18,
+        "amount": 5580.0
+      }
+    ],
+    "tax_total": 19689.6,
+    "total": 90009.6,
+    "needs_review": false,
+    "review_reasons": []
+  },
+  "meta": {
+    "status": "ok",
+    "source_type": "scanned_pdf",
+    "final_mode": "vision",
+    "model": "gemini-3.5-flash-lite",
+    "document_type": "invoice",
+    "legibility": "good",
+    "model_confidence": 1.0,
+    "notes": null,
+    "checks": [
+      {
+        "name": "document_type_consistent",
+        "ok": true,
+        "severity": "error",
+        "detail": ""
+      },
+      {
+        "name": "core_fields_present",
+        "ok": true,
+        "severity": "error",
+        "detail": ""
+      },
+      {
+        "name": "currency_known",
+        "ok": true,
+        "severity": "warn",
+        "detail": ""
+      },
+      {
+        "name": "date_plausible",
+        "ok": true,
+        "severity": "warn",
+        "detail": ""
+      },
+      {
+        "name": "tax_plausible",
+        "ok": true,
+        "severity": "warn",
+        "detail": ""
+      },
+      {
+        "name": "totals_reconcile",
+        "ok": true,
+        "severity": "error",
+        "detail": "sum(line amounts)=70320.00 + tax_total=19689.60 = 90009.60; total=90009.60; difference=0.00; tolerance=1.00"
+      },
+      {
+        "name": "legibility_good",
+        "ok": true,
+        "severity": "warn",
+        "detail": ""
+      },
+      {
+        "name": "confidence_ok",
+        "ok": true,
+        "severity": "warn",
+        "detail": ""
+      },
+      {
+        "name": "input_quality_ok",
+        "ok": true,
+        "severity": "warn",
+        "detail": ""
+      }
+    ],
+    "attempts": [
+      {
+        "attempt": 1,
+        "mode": "vision",
+        "model": "gemini-3.5-flash-lite",
+        "status": "ok",
+        "input_tokens": 2245,
+        "output_tokens": 364,
+        "cost_usd": 0.0015835,
+        "latency_s": 2.129,
+        "api_retries": 0,
+        "failed_checks": [],
+        "normalised": [],
+        "error": null
+      }
+    ],
+    "input_tokens": 2245,
+    "output_tokens": 364,
+    "cost_usd": 0.0015835,
+    "latency_s": 2.204,
+    "warnings": [],
+    "prompt_version": "v1",
+    "prompt_sha": "26befab048",
+    "error": null,
+    "normalisations": []
+  }
+}

@@ -1,0 +1,176 @@
+{
+  "output": {
+    "is_invoice": true,
+    "vendor": "ORBIT HARDWARE SUPPLIES",
+    "invoice_number": "OHS-8261-26",
+    "invoice_date": "2026-01-27",
+    "currency": "INR",
+    "line_items": [
+      {
+        "description": "Hex bolt M10 x 60 (box of 100)",
+        "quantity": 14,
+        "amount": 8960.0
+      },
+      {
+        "description": "Wood screw 2 in (box of 500)",
+        "quantity": 20,
+        "amount": 6300.0
+      },
+      {
+        "description": "Cutting disc 4 in (pack of 25)",
+        "quantity": 12,
+        "amount": 9360.0
+      },
+      {
+        "description": "Welding electrode 3.15mm (5 kg)",
+        "quantity": 18,
+        "amount": 12420.0
+      },
+      {
+        "description": "Angle grinder 850w",
+        "quantity": 3,
+        "amount": 10350.0
+      },
+      {
+        "description": "Drill bit set HSS (13 pc)",
+        "quantity": 6,
+        "amount": 6720.0
+      },
+      {
+        "description": "Safety gloves, leather (pair)",
+        "quantity": 40,
+        "amount": 3840.0
+      },
+      {
+        "description": "Spirit level 600mm",
+        "quantity": 5,
+        "amount": 2050.0
+      },
+      {
+        "description": "Measuring tape 5m",
+        "quantity": 15,
+        "amount": 2775.0
+      },
+      {
+        "description": "Anchor fastener M12 (box of 50)",
+        "quantity": 9,
+        "amount": 7830.0
+      }
+    ],
+    "tax_total": 12705.5,
+    "total": 83313.5,
+    "needs_review": true,
+    "review_reasons": [
+      "totals_reconcile",
+      "legibility_good"
+    ]
+  },
+  "meta": {
+    "status": "needs_review",
+    "source_type": "scanned_pdf",
+    "final_mode": "vision",
+    "model": "gemini-3.5-flash-lite",
+    "document_type": "invoice",
+    "legibility": "fair",
+    "model_confidence": 0.9,
+    "notes": "Indian document with rupee symbol interpreted as INR. Date assumed day-first (27/01/2026).",
+    "checks": [
+      {
+        "name": "document_type_consistent",
+        "ok": true,
+        "severity": "error",
+        "detail": ""
+      },
+      {
+        "name": "core_fields_present",
+        "ok": true,
+        "severity": "error",
+        "detail": ""
+      },
+      {
+        "name": "currency_known",
+        "ok": true,
+        "severity": "warn",
+        "detail": ""
+      },
+      {
+        "name": "date_plausible",
+        "ok": true,
+        "severity": "warn",
+        "detail": ""
+      },
+      {
+        "name": "tax_plausible",
+        "ok": true,
+        "severity": "warn",
+        "detail": ""
+      },
+      {
+        "name": "totals_reconcile",
+        "ok": false,
+        "severity": "error",
+        "detail": "sum(line amounts)=70605.00 + tax_total=12705.50 = 83310.50; total=83313.50; difference=3.00; tolerance=1.00"
+      },
+      {
+        "name": "legibility_good",
+        "ok": false,
+        "severity": "warn",
+        "detail": "model reports legibility=fair"
+      },
+      {
+        "name": "confidence_ok",
+        "ok": true,
+        "severity": "warn",
+        "detail": ""
+      },
+      {
+        "name": "input_quality_ok",
+        "ok": true,
+        "severity": "warn",
+        "detail": ""
+      }
+    ],
+    "attempts": [
+      {
+        "attempt": 1,
+        "mode": "vision",
+        "model": "gemini-3.5-flash-lite",
+        "status": "checks_failed",
+        "input_tokens": 2245,
+        "output_tokens": 620,
+        "cost_usd": 0.0022235,
+        "latency_s": 8.474,
+        "api_retries": 0,
+        "failed_checks": [
+          "totals_reconcile",
+          "legibility_good"
+        ],
+        "normalised": [],
+        "error": null
+      },
+      {
+        "attempt": 2,
+        "mode": "vision",
+        "model": "gemini-3.5-flash",
+        "status": "api_error",
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cost_usd": null,
+        "latency_s": 0.0,
+        "api_retries": 0,
+        "failed_checks": [],
+        "normalised": [],
+        "error": "rate_limit: Rate limited (429): 429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://aistudio.google.com/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Q"
+      }
+    ],
+    "input_tokens": 2245,
+    "output_tokens": 620,
+    "cost_usd": 0.0022235,
+    "latency_s": 190.455,
+    "warnings": [],
+    "prompt_version": "v1",
+    "prompt_sha": "26befab048",
+    "error": null,
+    "normalisations": []
+  }
+}

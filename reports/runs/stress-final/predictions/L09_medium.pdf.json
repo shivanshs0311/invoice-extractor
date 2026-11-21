@@ -1,0 +1,168 @@
+{
+  "output": {
+    "is_invoice": true,
+    "vendor": "COASTAL FRESH SEAFOODS",
+    "invoice_number": "CFS-4472",
+    "invoice_date": "2020-10-14",
+    "currency": "INR",
+    "line_items": [
+      {
+        "description": "King fish (seer), cleaned, kg",
+        "quantity": 32.5,
+        "amount": 31362.5
+      },
+      {
+        "description": "Tiger prawns 26/30, kg",
+        "quantity": 18,
+        "amount": 14400.0
+      },
+      {
+        "description": "Pomfret, whole, kg",
+        "quantity": 9.5,
+        "amount": 6365.0
+      },
+      {
+        "description": "Squid, cleaned, kg",
+        "quantity": 7,
+        "amount": 3430.0
+      },
+      {
+        "description": "Crab (live), kg",
+        "quantity": 11,
+        "amount": 6380.0
+      }
+    ],
+    "tax_total": 3636.5,
+    "total": 42442.5,
+    "needs_review": true,
+    "review_reasons": [
+      "totals_reconcile",
+      "legibility_good"
+    ]
+  },
+  "meta": {
+    "status": "needs_review",
+    "source_type": "scanned_pdf",
+    "final_mode": "vision",
+    "model": "gemini-3.5-flash-lite",
+    "document_type": "invoice",
+    "legibility": "fair",
+    "model_confidence": 0.85,
+    "notes": "Date interpreted as DD/MM/YYYY. The source document totals do not mathematically reconcile with the subtotal and taxes printed.",
+    "checks": [
+      {
+        "name": "document_type_consistent",
+        "ok": true,
+        "severity": "error",
+        "detail": ""
+      },
+      {
+        "name": "core_fields_present",
+        "ok": true,
+        "severity": "error",
+        "detail": ""
+      },
+      {
+        "name": "currency_known",
+        "ok": true,
+        "severity": "warn",
+        "detail": ""
+      },
+      {
+        "name": "date_plausible",
+        "ok": true,
+        "severity": "warn",
+        "detail": ""
+      },
+      {
+        "name": "tax_plausible",
+        "ok": true,
+        "severity": "warn",
+        "detail": ""
+      },
+      {
+        "name": "totals_reconcile",
+        "ok": false,
+        "severity": "error",
+        "detail": "sum(line amounts)=61937.50 + tax_total=3636.50 = 65574.00; total=42442.50; difference=23131.50; tolerance=1.00"
+      },
+      {
+        "name": "legibility_good",
+        "ok": false,
+        "severity": "warn",
+        "detail": "model reports legibility=fair"
+      },
+      {
+        "name": "confidence_ok",
+        "ok": true,
+        "severity": "warn",
+        "detail": ""
+      },
+      {
+        "name": "input_quality_ok",
+        "ok": true,
+        "severity": "warn",
+        "detail": ""
+      }
+    ],
+    "attempts": [
+      {
+        "attempt": 1,
+        "mode": "vision",
+        "model": "gemini-3.5-flash-lite",
+        "status": "checks_failed",
+        "input_tokens": 2245,
+        "output_tokens": 373,
+        "cost_usd": 0.001606,
+        "latency_s": 2.688,
+        "api_retries": 0,
+        "failed_checks": [
+          "totals_reconcile",
+          "legibility_good"
+        ],
+        "normalised": [],
+        "error": null
+      },
+      {
+        "attempt": 2,
+        "mode": "vision",
+        "model": "gemini-3.5-flash",
+        "status": "api_error",
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cost_usd": null,
+        "latency_s": 0.0,
+        "api_retries": 0,
+        "failed_checks": [],
+        "normalised": [],
+        "error": "quota: Daily quota exhausted for this model (429). It resets at midnight Pacific time. Use another model or key. Details: 429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://aistudio.google.com/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Q"
+      },
+      {
+        "attempt": 3,
+        "mode": "vision",
+        "model": "gemini-3.5-flash-lite",
+        "status": "checks_failed",
+        "input_tokens": 2718,
+        "output_tokens": 383,
+        "cost_usd": 0.0017729,
+        "latency_s": 2.331,
+        "api_retries": 0,
+        "failed_checks": [
+          "totals_reconcile",
+          "legibility_good"
+        ],
+        "normalised": [],
+        "error": null
+      }
+    ],
+    "input_tokens": 4963,
+    "output_tokens": 756,
+    "cost_usd": 0.0033789,
+    "latency_s": 5.466,
+    "warnings": [],
+    "prompt_version": "v1",
+    "prompt_sha": "26befab048",
+    "error": null,
+    "normalisations": []
+  }
+}

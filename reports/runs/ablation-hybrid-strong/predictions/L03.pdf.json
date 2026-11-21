@@ -1,0 +1,58 @@
+{
+  "output": {
+    "is_invoice": null,
+    "vendor": null,
+    "invoice_number": null,
+    "invoice_date": null,
+    "currency": null,
+    "line_items": null,
+    "tax_total": null,
+    "total": null,
+    "needs_review": true,
+    "review_reasons": [
+      "extraction_failed:api_server_error"
+    ],
+    "error": {
+      "code": "api_server_error",
+      "message": "Server error 503"
+    }
+  },
+  "meta": {
+    "status": "failed",
+    "source_type": "digital_pdf",
+    "final_mode": null,
+    "model": null,
+    "document_type": null,
+    "legibility": null,
+    "model_confidence": null,
+    "notes": null,
+    "checks": [],
+    "attempts": [
+      {
+        "attempt": 1,
+        "mode": "hybrid",
+        "model": "gemini-3.5-flash",
+        "status": "api_error",
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cost_usd": null,
+        "latency_s": 0.0,
+        "api_retries": 0,
+        "failed_checks": [],
+        "normalised": [],
+        "error": "server_error: Server error 503"
+      }
+    ],
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cost_usd": 0,
+    "latency_s": 37.725,
+    "warnings": [],
+    "prompt_version": "v1",
+    "prompt_sha": "26befab048",
+    "error": {
+      "code": "api_server_error",
+      "message": "Server error 503"
+    }
+  }
+}

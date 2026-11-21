@@ -1,0 +1,126 @@
+{
+  "output": {
+    "is_invoice": true,
+    "vendor": "PIXEL HARBOR STUDIO",
+    "invoice_number": "PHS-1042",
+    "invoice_date": "2026-03-14",
+    "currency": "USD",
+    "line_items": [
+      {
+        "description": "Brand identity package",
+        "quantity": 1,
+        "amount": 3200.0
+      },
+      {
+        "description": "Social media templates (set of 12)",
+        "quantity": 1,
+        "amount": 850.0
+      },
+      {
+        "description": "Additional revision rounds",
+        "quantity": 3,
+        "amount": 450.0
+      },
+      {
+        "description": "Returning client discount (10%)",
+        "quantity": null,
+        "amount": -450.0
+      }
+    ],
+    "tax_total": 334.13,
+    "total": 4384.13,
+    "needs_review": false,
+    "review_reasons": []
+  },
+  "meta": {
+    "status": "ok",
+    "source_type": "digital_pdf",
+    "final_mode": "text",
+    "model": "gemini-3.5-flash-lite",
+    "document_type": "invoice",
+    "legibility": "good",
+    "model_confidence": 1.0,
+    "notes": null,
+    "checks": [
+      {
+        "name": "document_type_consistent",
+        "ok": true,
+        "severity": "error",
+        "detail": ""
+      },
+      {
+        "name": "core_fields_present",
+        "ok": true,
+        "severity": "error",
+        "detail": ""
+      },
+      {
+        "name": "currency_known",
+        "ok": true,
+        "severity": "warn",
+        "detail": ""
+      },
+      {
+        "name": "date_plausible",
+        "ok": true,
+        "severity": "warn",
+        "detail": ""
+      },
+      {
+        "name": "tax_plausible",
+        "ok": true,
+        "severity": "warn",
+        "detail": ""
+      },
+      {
+        "name": "totals_reconcile",
+        "ok": true,
+        "severity": "error",
+        "detail": "sum(line amounts)=4050.00 + tax_total=334.13 = 4384.13; total=4384.13; difference=0.00; tolerance=1.00"
+      },
+      {
+        "name": "legibility_good",
+        "ok": true,
+        "severity": "warn",
+        "detail": ""
+      },
+      {
+        "name": "confidence_ok",
+        "ok": true,
+        "severity": "warn",
+        "detail": ""
+      },
+      {
+        "name": "input_quality_ok",
+        "ok": true,
+        "severity": "warn",
+        "detail": ""
+      }
+    ],
+    "attempts": [
+      {
+        "attempt": 1,
+        "mode": "text",
+        "model": "gemini-3.5-flash-lite",
+        "status": "ok",
+        "input_tokens": 1503,
+        "output_tokens": 296,
+        "cost_usd": 0.0011909,
+        "latency_s": 11.326,
+        "api_retries": 0,
+        "failed_checks": [],
+        "normalised": [],
+        "error": null
+      }
+    ],
+    "input_tokens": 1503,
+    "output_tokens": 296,
+    "cost_usd": 0.0011909,
+    "latency_s": 11.331,
+    "warnings": [],
+    "prompt_version": "v1",
+    "prompt_sha": "26befab048",
+    "error": null,
+    "normalisations": []
+  }
+}

@@ -1,0 +1,81 @@
+{
+  "output": {
+    "is_invoice": false,
+    "vendor": null,
+    "invoice_number": null,
+    "invoice_date": null,
+    "currency": null,
+    "line_items": null,
+    "tax_total": null,
+    "total": null,
+    "needs_review": false,
+    "review_reasons": []
+  },
+  "meta": {
+    "status": "ok",
+    "source_type": "scanned_pdf",
+    "final_mode": "vision",
+    "model": "gemini-3.5-flash-lite",
+    "document_type": "purchase_order",
+    "legibility": "good",
+    "model_confidence": 1.0,
+    "notes": "The document is a purchase order, not an invoice.",
+    "checks": [
+      {
+        "name": "document_type_consistent",
+        "ok": true,
+        "severity": "error",
+        "detail": ""
+      },
+      {
+        "name": "non_invoice_fields_null",
+        "ok": true,
+        "severity": "warn",
+        "detail": ""
+      },
+      {
+        "name": "legibility_good",
+        "ok": true,
+        "severity": "warn",
+        "detail": ""
+      },
+      {
+        "name": "confidence_ok",
+        "ok": true,
+        "severity": "warn",
+        "detail": ""
+      },
+      {
+        "name": "input_quality_ok",
+        "ok": true,
+        "severity": "warn",
+        "detail": ""
+      }
+    ],
+    "attempts": [
+      {
+        "attempt": 1,
+        "mode": "vision",
+        "model": "gemini-3.5-flash-lite",
+        "status": "ok",
+        "input_tokens": 2245,
+        "output_tokens": 117,
+        "cost_usd": 0.000966,
+        "latency_s": 1.692,
+        "api_retries": 0,
+        "failed_checks": [],
+        "normalised": [],
+        "error": null
+      }
+    ],
+    "input_tokens": 2245,
+    "output_tokens": 117,
+    "cost_usd": 0.000966,
+    "latency_s": 1.763,
+    "warnings": [],
+    "prompt_version": "v1",
+    "prompt_sha": "26befab048",
+    "error": null,
+    "normalisations": []
+  }
+}

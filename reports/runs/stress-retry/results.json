@@ -1,0 +1,861 @@
+{
+  "info": {
+    "tag": "stress-retry",
+    "timestamp": "2026-11-21T15:37:21",
+    "mode": "auto",
+    "model": "gemini-3.5-flash-lite",
+    "escalation_model": "gemini-3.5-flash",
+    "prompt_version": "v1",
+    "prompt_sha": "26befab048",
+    "documents": 30,
+    "data_dir": "data\\stress",
+    "reused_predictions": false,
+    "wall_time_s": 373.8
+  },
+  "summary": {
+    "overall_field_pct": 62.10045662100457,
+    "accuracy": [
+      {
+        "field": "is_invoice",
+        "correct": 27,
+        "n": 30,
+        "pct": 90.0
+      },
+      {
+        "field": "vendor",
+        "correct": 19,
+        "n": 27,
+        "pct": 70.37037037037037
+      },
+      {
+        "field": "invoice_number",
+        "correct": 13,
+        "n": 27,
+        "pct": 48.148148148148145
+      },
+      {
+        "field": "invoice_date",
+        "correct": 15,
+        "n": 27,
+        "pct": 55.55555555555556
+      },
+      {
+        "field": "currency",
+        "correct": 19,
+        "n": 27,
+        "pct": 70.37037037037037
+      },
+      {
+        "field": "line_items (strict: every item right)",
+        "correct": 14,
+        "n": 27,
+        "pct": 51.851851851851855
+      },
+      {
+        "field": "tax_total",
+        "correct": 14,
+        "n": 27,
+        "pct": 51.851851851851855
+      },
+      {
+        "field": "total",
+        "correct": 15,
+        "n": 27,
+        "pct": 55.55555555555556
+      }
+    ],
+    "line_items": {
+      "item_f1_pct": 61.04938271604939,
+      "amount_only_f1_pct": 61.04938271604939,
+      "n": 27
+    },
+    "doc_level": {
+      "correct": 15,
+      "n": 30,
+      "pct": 50.0
+    },
+    "non_invoice": {
+      "correct": 3,
+      "n": 3
+    },
+    "by_source": [
+      {
+        "source": "scanned_pdf",
+        "docs": 30,
+        "all_correct": 15,
+        "field_acc_pct": 62.10045662100457,
+        "avg_cost": 0.00203912
+      }
+    ],
+    "cost": {
+      "avg_cost_usd": 0.00203912,
+      "total_cost_usd": 0.0611736,
+      "avg_input_tokens": 3247.0666666666666,
+      "avg_output_tokens": 426.0,
+      "avg_latency_s": 24.4177,
+      "docs_with_retry": 10,
+      "docs_failed": 0,
+      "n": 30,
+      "unpriced": false
+    },
+    "review": {
+      "n": 30,
+      "flagged": 18,
+      "docs_with_errors": 15,
+      "true_positive": 15,
+      "precision_pct": 83.33333333333333,
+      "recall_pct": 100.0,
+      "errors_in_flagged_pct": 100.0,
+      "total_field_errors": 83
+    },
+    "errors": [
+      {
+        "file": "L01_medium.pdf",
+        "field": "line_items",
+        "expected": "4 item(s)",
+        "got": "4 item(s)",
+        "hint": "line items: wrong amounts",
+        "source": "scanned_pdf",
+        "flagged": true
+      },
+      {
+        "file": "L01_severe.pdf",
+        "field": "invoice_number",
+        "expected": "NWL-88213",
+        "got": "null",
+        "hint": "missed field (returned null)",
+        "source": "scanned_pdf",
+        "flagged": true
+      },
+      {
+        "file": "L01_severe.pdf",
+        "field": "invoice_date",
+        "expected": "2026-04-08",
+        "got": "null",
+        "hint": "missed field (returned null)",
+        "source": "scanned_pdf",
+        "flagged": true
+      },
+      {
+        "file": "L01_severe.pdf",
+        "field": "currency",
+        "expected": "GBP",
+        "got": "null",
+        "hint": "missed field (returned null)",
+        "source": "scanned_pdf",
+        "flagged": true
+      },
+      {
+        "file": "L01_severe.pdf",
+        "field": "line_items",
+        "expected": "4 item(s)",
+        "got": "0 item(s)",
+        "hint": "line items: 4 missing",
+        "source": "scanned_pdf",
+        "flagged": true
+      },
+      {
+        "file": "L01_severe.pdf",
+        "field": "tax_total",
+        "expected": "113.9",
+        "got": "null",
+        "hint": "missed field (returned null)",
+        "source": "scanned_pdf",
+        "flagged": true
+      },
+      {
+        "file": "L01_severe.pdf",
+        "field": "total",
+        "expected": "683.4",
+        "got": "null",
+        "hint": "missed field (returned null)",
+        "source": "scanned_pdf",
+        "flagged": true
+      },
+      {
+        "file": "L02_medium.pdf",
+        "field": "invoice_number",
+        "expected": "SGS/1847",
+        "got": "566/1847",
+        "hint": "wrong identifier (PO or order number?) or misread characters",
+        "source": "scanned_pdf",
+        "flagged": true
+      },
+      {
+        "file": "L02_medium.pdf",
+        "field": "invoice_date",
+        "expected": "2026-08-19",
+        "got": "2020-06-18",
+        "hint": "wrong date (due date or another date?)",
+        "source": "scanned_pdf",
+        "flagged": true
+      },
+      {
+        "file": "L02_medium.pdf",
+        "field": "line_items",
+        "expected": "6 item(s)",
+        "got": "6 item(s)",
+        "hint": "line items: wrong amounts",
+        "source": "scanned_pdf",
+        "flagged": true
+      },
+      {
+        "file": "L02_medium.pdf",
+        "field": "tax_total",
+        "expected": "3529.8",
+        "got": "3528.8",
+        "hint": "wrong number (misread digit or wrong row)",
+        "source": "scanned_pdf",
+        "flagged": true
+      },
+      {
+        "file": "L02_severe.pdf",
+        "field": "vendor",
+        "expected": "Shree Ganesh Stationers",
+        "got": "null",
+        "hint": "missed field (returned null)",
+        "source": "scanned_pdf",
+        "flagged": true
+      },
+      {
+        "file": "L02_severe.pdf",
+        "field": "invoice_number",
+        "expected": "SGS/1847",
+        "got": "null",
+        "hint": "missed field (returned null)",
+        "source": "scanned_pdf",
+        "flagged": true
+      },
+      {
+        "file": "L02_severe.pdf",
+        "field": "invoice_date",
+        "expected": "2026-08-19",
+        "got": "null",
+        "hint": "missed field (returned null)",
+        "source": "scanned_pdf",
+        "flagged": true
+      },
+      {
+        "file": "L02_severe.pdf",
+        "field": "currency",
+        "expected": "INR",
+        "got": "null",
+        "hint": "missed field (returned null)",
+        "source": "scanned_pdf",
+        "flagged": true
+      },
+      {
+        "file": "L02_severe.pdf",
+        "field": "line_items",
+        "expected": "6 item(s)",
+        "got": "0 item(s)",
+        "hint": "line items: 6 missing",
+        "source": "scanned_pdf",
+        "flagged": true
+      },
+      {
+        "file": "L02_severe.pdf",
+        "field": "tax_total",
+        "expected": "3529.8",
+        "got": "null",
+        "hint": "missed field (returned null)",
+        "source": "scanned_pdf",
+        "flagged": true
+      },
+      {
+        "file": "L02_severe.pdf",
+        "field": "total",
+        "expected": "23139.8",
+        "got": "null",
+        "hint": "missed field (returned null)",
+        "source": "scanned_pdf",
+        "flagged": true
+      },
+      {
+        "file": "L03_severe.pdf",
+        "field": "vendor",
+        "expected": "Kaveri Office Mart Pvt Ltd",
+        "got": "null",
+        "hint": "missed field (returned null)",
+        "source": "scanned_pdf",
+        "flagged": true
+      },
+      {
+        "file": "L03_severe.pdf",
+        "field": "invoice_number",
+        "expected": "KOM/26-27/00418",
+        "got": "null",
+        "hint": "missed field (returned null)",
+        "source": "scanned_pdf",
+        "flagged": true
+      },
+      {
+        "file": "L03_severe.pdf",
+        "field": "invoice_date",
+        "expected": "2026-06-23",
+        "got": "null",
+        "hint": "missed field (returned null)",
+        "source": "scanned_pdf",
+        "flagged": true
+      },
+      {
+        "file": "L03_severe.pdf",
+        "field": "currency",
+        "expected": "INR",
+        "got": "null",
+        "hint": "missed field (returned null)",
+        "source": "scanned_pdf",
+        "flagged": true
+      },
+      {
+        "file": "L03_severe.pdf",
+        "field": "line_items",
+        "expected": "4 item(s)",
+        "got": "0 item(s)",
+        "hint": "line items: 4 missing",
+        "source": "scanned_pdf",
+        "flagged": true
+      },
+      {
+        "file": "L03_severe.pdf",
+        "field": "tax_total",
+        "expected": "9788.4",
+        "got": "null",
+        "hint": "missed field (returned null)",
+        "source": "scanned_pdf",
+        "flagged": true
+      },
+      {
+        "file": "L03_severe.pdf",
+        "field": "total",
+        "expected": "64168.4",
+        "got": "null",
+        "hint": "missed field (returned null)",
+        "source": "scanned_pdf",
+        "flagged": true
+      },
+      {
+        "file": "L04_severe.pdf",
+        "field": "vendor",
+        "expected": "Meridian Print & Pack LLP",
+        "got": "null",
+        "hint": "missed field (returned null)",
+        "source": "scanned_pdf",
+        "flagged": true
+      },
+      {
+        "file": "L04_severe.pdf",
+        "field": "invoice_number",
+        "expected": "MPP-2026-0207",
+        "got": "null",
+        "hint": "missed field (returned null)",
+        "source": "scanned_pdf",
+        "flagged": true
+      },
+      {
+        "file": "L04_severe.pdf",
+        "field": "invoice_date",
+        "expected": "2026-02-17",
+        "got": "null",
+        "hint": "missed field (returned null)",
+        "source": "scanned_pdf",
+        "flagged": true
+      },
+      {
+        "file": "L04_severe.pdf",
+        "field": "currency",
+        "expected": "INR",
+        "got": "null",
+        "hint": "missed field (returned null)",
+        "source": "scanned_pdf",
+        "flagged": true
+      },
+      {
+        "file": "L04_severe.pdf",
+        "field": "line_items",
+        "expected": "24 item(s)",
+        "got": "0 item(s)",
+        "hint": "line items: 24 missing",
+        "source": "scanned_pdf",
+        "flagged": true
+      },
+      {
+        "file": "L04_severe.pdf",
+        "field": "tax_total",
+        "expected": "32194.8",
+        "got": "null",
+        "hint": "missed field (returned null)",
+        "source": "scanned_pdf",
+        "flagged": true
+      },
+      {
+        "file": "L04_severe.pdf",
+        "field": "total",
+        "expected": "300484.8",
+        "got": "null",
+        "hint": "missed field (returned null)",
+        "source": "scanned_pdf",
+        "flagged": true
+      },
+      {
+        "file": "L05_medium.pdf",
+        "field": "invoice_number",
+        "expected": "OHS-0261-26",
+        "got": "OHS-8261-26",
+        "hint": "wrong identifier (PO or order number?) or misread characters",
+        "source": "scanned_pdf",
+        "flagged": true
+      },
+      {
+        "file": "L05_medium.pdf",
+        "field": "line_items",
+        "expected": "10 item(s)",
+        "got": "10 item(s)",
+        "hint": "line items: wrong amounts",
+        "source": "scanned_pdf",
+        "flagged": true
+      },
+      {
+        "file": "L05_medium.pdf",
+        "field": "tax_total",
+        "expected": "12708.9",
+        "got": "12700.5",
+        "hint": "wrong number (misread digit or wrong row)",
+        "source": "scanned_pdf",
+        "flagged": true
+      },
+      {
+        "file": "L05_medium.pdf",
+        "field": "total",
+        "expected": "83313.9",
+        "got": "83313.5",
+        "hint": "wrong number (misread digit or wrong row)",
+        "source": "scanned_pdf",
+        "flagged": true
+      },
+      {
+        "file": "L05_severe.pdf",
+        "field": "is_invoice",
+        "expected": "True",
+        "got": "False",
+        "hint": "classification: invoice vs non-invoice",
+        "source": "scanned_pdf",
+        "flagged": true
+      },
+      {
+        "file": "L05_severe.pdf",
+        "field": "vendor",
+        "expected": "Orbit Hardware Supplies",
+        "got": "null",
+        "hint": "missed field (returned null)",
+        "source": "scanned_pdf",
+        "flagged": true
+      },
+      {
+        "file": "L05_severe.pdf",
+        "field": "invoice_number",
+        "expected": "OHS-0261-26",
+        "got": "null",
+        "hint": "missed field (returned null)",
+        "source": "scanned_pdf",
+        "flagged": true
+      },
+      {
+        "file": "L05_severe.pdf",
+        "field": "invoice_date",
+        "expected": "2026-01-27",
+        "got": "null",
+        "hint": "missed field (returned null)",
+        "source": "scanned_pdf",
+        "flagged": true
+      },
+      {
+        "file": "L05_severe.pdf",
+        "field": "currency",
+        "expected": "INR",
+        "got": "null",
+        "hint": "missed field (returned null)",
+        "source": "scanned_pdf",
+        "flagged": true
+      },
+      {
+        "file": "L05_severe.pdf",
+        "field": "line_items",
+        "expected": "10 item(s)",
+        "got": "0 item(s)",
+        "hint": "line items: 10 missing",
+        "source": "scanned_pdf",
+        "flagged": true
+      },
+      {
+        "file": "L05_severe.pdf",
+        "field": "tax_total",
+        "expected": "12708.9",
+        "got": "null",
+        "hint": "missed field (returned null)",
+        "source": "scanned_pdf",
+        "flagged": true
+      },
+      {
+        "file": "L05_severe.pdf",
+        "field": "total",
+        "expected": "83313.9",
+        "got": "null",
+        "hint": "missed field (returned null)",
+        "source": "scanned_pdf",
+        "flagged": true
+      },
+      {
+        "file": "L06_severe.pdf",
+        "field": "vendor",
+        "expected": "Anand & Rao Associates",
+        "got": "Arvind & Co",
+        "hint": "wrong party (customer instead of seller?)",
+        "source": "scanned_pdf",
+        "flagged": true
+      },
+      {
+        "file": "L06_severe.pdf",
+        "field": "invoice_number",
+        "expected": "AR/2026/0093",
+        "got": "AC-2023-0349",
+        "hint": "wrong identifier (PO or order number?) or misread characters",
+        "source": "scanned_pdf",
+        "flagged": true
+      },
+      {
+        "file": "L06_severe.pdf",
+        "field": "invoice_date",
+        "expected": "2026-05-30",
+        "got": "2023-04-05",
+        "hint": "wrong date (due date or another date?)",
+        "source": "scanned_pdf",
+        "flagged": true
+      },
+      {
+        "file": "L06_severe.pdf",
+        "field": "line_items",
+        "expected": "4 item(s)",
+        "got": "4 item(s)",
+        "hint": "line items: wrong amounts",
+        "source": "scanned_pdf",
+        "flagged": true
+      },
+      {
+        "file": "L06_severe.pdf",
+        "field": "tax_total",
+        "expected": "10933.2",
+        "got": "530.0",
+        "hint": "wrong number (misread digit or wrong row)",
+        "source": "scanned_pdf",
+        "flagged": true
+      },
+      {
+        "file": "L06_severe.pdf",
+        "field": "total",
+        "expected": "71673.2",
+        "got": "5830.0",
+        "hint": "wrong number (misread digit or wrong row)",
+        "source": "scanned_pdf",
+        "flagged": true
+      },
+      {
+        "file": "L07_medium.pdf",
+        "field": "invoice_number",
+        "expected": "PHS-1042",
+        "got": "PHS-1842",
+        "hint": "wrong identifier (PO or order number?) or misread characters",
+        "source": "scanned_pdf",
+        "flagged": true
+      },
+      {
+        "file": "L07_severe.pdf",
+        "field": "is_invoice",
+        "expected": "True",
+        "got": "False",
+        "hint": "classification: invoice vs non-invoice",
+        "source": "scanned_pdf",
+        "flagged": true
+      },
+      {
+        "file": "L07_severe.pdf",
+        "field": "vendor",
+        "expected": "Pixel Harbor Studio",
+        "got": "null",
+        "hint": "missed field (returned null)",
+        "source": "scanned_pdf",
+        "flagged": true
+      },
+      {
+        "file": "L07_severe.pdf",
+        "field": "invoice_number",
+        "expected": "PHS-1042",
+        "got": "null",
+        "hint": "missed field (returned null)",
+        "source": "scanned_pdf",
+        "flagged": true
+      },
+      {
+        "file": "L07_severe.pdf",
+        "field": "invoice_date",
+        "expected": "2026-03-14",
+        "got": "null",
+        "hint": "missed field (returned null)",
+        "source": "scanned_pdf",
+        "flagged": true
+      },
+      {
+        "file": "L07_severe.pdf",
+        "field": "currency",
+        "expected": "USD",
+        "got": "null",
+        "hint": "missed field (returned null)",
+        "source": "scanned_pdf",
+        "flagged": true
+      },
+      {
+        "file": "L07_severe.pdf",
+        "field": "line_items",
+        "expected": "4 item(s)",
+        "got": "0 item(s)",
+        "hint": "line items: 4 missing",
+        "source": "scanned_pdf",
+        "flagged": true
+      },
+      {
+        "file": "L07_severe.pdf",
+        "field": "tax_total",
+        "expected": "334.13",
+        "got": "null",
+        "hint": "missed field (returned null)",
+        "source": "scanned_pdf",
+        "flagged": true
+      },
+      {
+        "file": "L07_severe.pdf",
+        "field": "total",
+        "expected": "4384.13",
+        "got": "null",
+        "hint": "missed field (returned null)",
+        "source": "scanned_pdf",
+        "flagged": true
+      },
+      {
+        "file": "L09_medium.pdf",
+        "field": "invoice_number",
+        "expected": "CFS-4471",
+        "got": "CFS-4472",
+        "hint": "wrong identifier (PO or order number?) or misread characters",
+        "source": "scanned_pdf",
+        "flagged": true
+      },
+      {
+        "file": "L09_medium.pdf",
+        "field": "invoice_date",
+        "expected": "2026-10-14",
+        "got": "2020-10-14",
+        "hint": "wrong date (due date or another date?)",
+        "source": "scanned_pdf",
+        "flagged": true
+      },
+      {
+        "file": "L09_medium.pdf",
+        "field": "line_items",
+        "expected": "5 item(s)",
+        "got": "5 item(s)",
+        "hint": "line items: wrong amounts",
+        "source": "scanned_pdf",
+        "flagged": true
+      },
+      {
+        "file": "L09_medium.pdf",
+        "field": "tax_total",
+        "expected": "2032.5",
+        "got": "3636.5",
+        "hint": "wrong number (misread digit or wrong row)",
+        "source": "scanned_pdf",
+        "flagged": true
+      },
+      {
+        "file": "L09_medium.pdf",
+        "field": "total",
+        "expected": "42682.5",
+        "got": "78282.5",
+        "hint": "wrong number (misread digit or wrong row)",
+        "source": "scanned_pdf",
+        "flagged": true
+      },
+      {
+        "file": "L09_severe.pdf",
+        "field": "is_invoice",
+        "expected": "True",
+        "got": "False",
+        "hint": "classification: invoice vs non-invoice",
+        "source": "scanned_pdf",
+        "flagged": true
+      },
+      {
+        "file": "L09_severe.pdf",
+        "field": "vendor",
+        "expected": "Coastal Fresh Seafoods",
+        "got": "null",
+        "hint": "missed field (returned null)",
+        "source": "scanned_pdf",
+        "flagged": true
+      },
+      {
+        "file": "L09_severe.pdf",
+        "field": "invoice_number",
+        "expected": "CFS-4471",
+        "got": "null",
+        "hint": "missed field (returned null)",
+        "source": "scanned_pdf",
+        "flagged": true
+      },
+      {
+        "file": "L09_severe.pdf",
+        "field": "invoice_date",
+        "expected": "2026-10-14",
+        "got": "null",
+        "hint": "missed field (returned null)",
+        "source": "scanned_pdf",
+        "flagged": true
+      },
+      {
+        "file": "L09_severe.pdf",
+        "field": "currency",
+        "expected": "INR",
+        "got": "null",
+        "hint": "missed field (returned null)",
+        "source": "scanned_pdf",
+        "flagged": true
+      },
+      {
+        "file": "L09_severe.pdf",
+        "field": "line_items",
+        "expected": "5 item(s)",
+        "got": "0 item(s)",
+        "hint": "line items: 5 missing",
+        "source": "scanned_pdf",
+        "flagged": true
+      },
+      {
+        "file": "L09_severe.pdf",
+        "field": "tax_total",
+        "expected": "2032.5",
+        "got": "null",
+        "hint": "missed field (returned null)",
+        "source": "scanned_pdf",
+        "flagged": true
+      },
+      {
+        "file": "L09_severe.pdf",
+        "field": "total",
+        "expected": "42682.5",
+        "got": "null",
+        "hint": "missed field (returned null)",
+        "source": "scanned_pdf",
+        "flagged": true
+      },
+      {
+        "file": "L10_medium.pdf",
+        "field": "invoice_number",
+        "expected": "MAP/D/09-0312",
+        "got": "MAP/20-21/12",
+        "hint": "wrong identifier (PO or order number?) or misread characters",
+        "source": "scanned_pdf",
+        "flagged": true
+      },
+      {
+        "file": "L10_medium.pdf",
+        "field": "invoice_date",
+        "expected": "2026-09-03",
+        "got": "2020-09-03",
+        "hint": "wrong date (due date or another date?)",
+        "source": "scanned_pdf",
+        "flagged": true
+      },
+      {
+        "file": "L10_medium.pdf",
+        "field": "tax_total",
+        "expected": "19689.6",
+        "got": "19688.8",
+        "hint": "wrong number (misread digit or wrong row)",
+        "source": "scanned_pdf",
+        "flagged": true
+      },
+      {
+        "file": "L10_medium.pdf",
+        "field": "total",
+        "expected": "90009.6",
+        "got": "90008.8",
+        "hint": "wrong number (misread digit or wrong row)",
+        "source": "scanned_pdf",
+        "flagged": true
+      },
+      {
+        "file": "L10_severe.pdf",
+        "field": "vendor",
+        "expected": "Metro Auto Parts",
+        "got": "null",
+        "hint": "missed field (returned null)",
+        "source": "scanned_pdf",
+        "flagged": true
+      },
+      {
+        "file": "L10_severe.pdf",
+        "field": "invoice_number",
+        "expected": "MAP/D/09-0312",
+        "got": "null",
+        "hint": "missed field (returned null)",
+        "source": "scanned_pdf",
+        "flagged": true
+      },
+      {
+        "file": "L10_severe.pdf",
+        "field": "invoice_date",
+        "expected": "2026-09-03",
+        "got": "null",
+        "hint": "missed field (returned null)",
+        "source": "scanned_pdf",
+        "flagged": true
+      },
+      {
+        "file": "L10_severe.pdf",
+        "field": "currency",
+        "expected": "INR",
+        "got": "null",
+        "hint": "missed field (returned null)",
+        "source": "scanned_pdf",
+        "flagged": true
+      },
+      {
+        "file": "L10_severe.pdf",
+        "field": "line_items",
+        "expected": "5 item(s)",
+        "got": "0 item(s)",
+        "hint": "line items: 5 missing",
+        "source": "scanned_pdf",
+        "flagged": true
+      },
+      {
+        "file": "L10_severe.pdf",
+        "field": "tax_total",
+        "expected": "19689.6",
+        "got": "null",
+        "hint": "missed field (returned null)",
+        "source": "scanned_pdf",
+        "flagged": true
+      },
+      {
+        "file": "L10_severe.pdf",
+        "field": "total",
+        "expected": "90009.6",
+        "got": "null",
+        "hint": "missed field (returned null)",
+        "source": "scanned_pdf",
+        "flagged": true
+      }
+    ]
+  }
+}

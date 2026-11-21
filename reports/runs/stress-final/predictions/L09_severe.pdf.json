@@ -1,0 +1,91 @@
+{
+  "output": {
+    "is_invoice": null,
+    "vendor": null,
+    "invoice_number": null,
+    "invoice_date": null,
+    "currency": null,
+    "line_items": null,
+    "tax_total": null,
+    "total": null,
+    "needs_review": true,
+    "review_reasons": [
+      "extraction_failed:unreadable_document"
+    ],
+    "error": {
+      "code": "unreadable_document",
+      "message": "The model rates this scan as poor and its result is not trustworthy (is_invoice=False, confidence=0.90, failed checks: none). Send a clearer scan."
+    }
+  },
+  "meta": {
+    "status": "failed",
+    "source_type": "scanned_pdf",
+    "final_mode": "vision",
+    "model": "gemini-3.5-flash-lite",
+    "document_type": "other",
+    "legibility": "poor",
+    "model_confidence": 0.9,
+    "notes": "The document image is extremely blurry and unreadable, preventing any reliable data extraction.",
+    "checks": [
+      {
+        "name": "document_type_consistent",
+        "ok": true,
+        "severity": "error",
+        "detail": ""
+      },
+      {
+        "name": "non_invoice_fields_null",
+        "ok": true,
+        "severity": "warn",
+        "detail": ""
+      },
+      {
+        "name": "legibility_good",
+        "ok": false,
+        "severity": "warn",
+        "detail": "model reports legibility=poor"
+      },
+      {
+        "name": "confidence_ok",
+        "ok": true,
+        "severity": "warn",
+        "detail": ""
+      },
+      {
+        "name": "input_quality_ok",
+        "ok": true,
+        "severity": "warn",
+        "detail": ""
+      }
+    ],
+    "attempts": [
+      {
+        "attempt": 1,
+        "mode": "vision",
+        "model": "gemini-3.5-flash-lite",
+        "status": "ok",
+        "input_tokens": 2245,
+        "output_tokens": 120,
+        "cost_usd": 0.0009735,
+        "latency_s": 1.99,
+        "api_retries": 0,
+        "failed_checks": [
+          "legibility_good"
+        ],
+        "normalised": [],
+        "error": null
+      }
+    ],
+    "input_tokens": 2245,
+    "output_tokens": 120,
+    "cost_usd": 0.0009735,
+    "latency_s": 2.031,
+    "warnings": [],
+    "prompt_version": "v1",
+    "prompt_sha": "26befab048",
+    "error": {
+      "code": "unreadable_document",
+      "message": "The model rates this scan as poor and its result is not trustworthy (is_invoice=False, confidence=0.90, failed checks: none). Send a clearer scan."
+    }
+  }
+}

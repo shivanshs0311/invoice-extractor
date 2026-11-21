@@ -1,0 +1,126 @@
+{
+  "output": {
+    "is_invoice": true,
+    "vendor": "Anand & Rao Associates",
+    "invoice_number": "AR/2026/0093",
+    "invoice_date": "2026-05-30",
+    "currency": "INR",
+    "line_items": [
+      {
+        "description": "Monthly compliance retainer (May 2026)",
+        "quantity": null,
+        "amount": 45000.0
+      },
+      {
+        "description": "GST return filing (GSTR-1 and GSTR-3B)",
+        "quantity": 1,
+        "amount": 6500.0
+      },
+      {
+        "description": "TDS return preparation (quarterly)",
+        "quantity": 1,
+        "amount": 8000.0
+      },
+      {
+        "description": "Out-of-pocket expenses (reimbursable)",
+        "quantity": null,
+        "amount": 1240.0
+      }
+    ],
+    "tax_total": 10933.2,
+    "total": 71673.2,
+    "needs_review": false,
+    "review_reasons": []
+  },
+  "meta": {
+    "status": "ok",
+    "source_type": "scanned_pdf",
+    "final_mode": "vision",
+    "model": "gemini-3.5-flash-lite",
+    "document_type": "invoice",
+    "legibility": "good",
+    "model_confidence": 1.0,
+    "notes": null,
+    "checks": [
+      {
+        "name": "document_type_consistent",
+        "ok": true,
+        "severity": "error",
+        "detail": ""
+      },
+      {
+        "name": "core_fields_present",
+        "ok": true,
+        "severity": "error",
+        "detail": ""
+      },
+      {
+        "name": "currency_known",
+        "ok": true,
+        "severity": "warn",
+        "detail": ""
+      },
+      {
+        "name": "date_plausible",
+        "ok": true,
+        "severity": "warn",
+        "detail": ""
+      },
+      {
+        "name": "tax_plausible",
+        "ok": true,
+        "severity": "warn",
+        "detail": ""
+      },
+      {
+        "name": "totals_reconcile",
+        "ok": true,
+        "severity": "error",
+        "detail": "sum(line amounts)=60740.00 + tax_total=10933.20 = 71673.20; total=71673.20; difference=0.00; tolerance=1.00"
+      },
+      {
+        "name": "legibility_good",
+        "ok": true,
+        "severity": "warn",
+        "detail": ""
+      },
+      {
+        "name": "confidence_ok",
+        "ok": true,
+        "severity": "warn",
+        "detail": ""
+      },
+      {
+        "name": "input_quality_ok",
+        "ok": true,
+        "severity": "warn",
+        "detail": ""
+      }
+    ],
+    "attempts": [
+      {
+        "attempt": 1,
+        "mode": "vision",
+        "model": "gemini-3.5-flash-lite",
+        "status": "ok",
+        "input_tokens": 2245,
+        "output_tokens": 324,
+        "cost_usd": 0.0014835,
+        "latency_s": 31.65,
+        "api_retries": 0,
+        "failed_checks": [],
+        "normalised": [],
+        "error": null
+      }
+    ],
+    "input_tokens": 2245,
+    "output_tokens": 324,
+    "cost_usd": 0.0014835,
+    "latency_s": 31.725,
+    "warnings": [],
+    "prompt_version": "v1",
+    "prompt_sha": "26befab048",
+    "error": null,
+    "normalisations": []
+  }
+}

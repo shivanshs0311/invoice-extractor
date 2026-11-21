@@ -1,0 +1,139 @@
+{
+  "output": {
+    "is_invoice": true,
+    "vendor": null,
+    "invoice_number": null,
+    "invoice_date": null,
+    "currency": null,
+    "line_items": null,
+    "tax_total": null,
+    "total": null,
+    "needs_review": true,
+    "review_reasons": [
+      "core_fields_present",
+      "currency_known",
+      "totals_unverifiable",
+      "legibility_good",
+      "confidence_ok"
+    ]
+  },
+  "meta": {
+    "status": "needs_review",
+    "source_type": "scanned_pdf",
+    "final_mode": "vision",
+    "model": "gemini-3.5-flash-lite",
+    "document_type": "invoice",
+    "legibility": "poor",
+    "model_confidence": 0.0,
+    "notes": "The document image is severely tilted, blurry, and illegible. No text, vendor name, invoice number, dates, line items, or totals can be read.",
+    "checks": [
+      {
+        "name": "document_type_consistent",
+        "ok": true,
+        "severity": "error",
+        "detail": ""
+      },
+      {
+        "name": "core_fields_present",
+        "ok": false,
+        "severity": "error",
+        "detail": "missing: ['vendor', 'invoice_number', 'invoice_date', 'total', 'line_items']"
+      },
+      {
+        "name": "currency_known",
+        "ok": false,
+        "severity": "warn",
+        "detail": "currency is None, not a recognised ISO 4217 code"
+      },
+      {
+        "name": "totals_unverifiable",
+        "ok": false,
+        "severity": "warn",
+        "detail": "need both a total and at least one line item to reconcile"
+      },
+      {
+        "name": "legibility_good",
+        "ok": false,
+        "severity": "warn",
+        "detail": "model reports legibility=poor"
+      },
+      {
+        "name": "confidence_ok",
+        "ok": false,
+        "severity": "warn",
+        "detail": "model confidence 0.00 < 0.70"
+      },
+      {
+        "name": "input_quality_ok",
+        "ok": true,
+        "severity": "warn",
+        "detail": ""
+      }
+    ],
+    "attempts": [
+      {
+        "attempt": 1,
+        "mode": "vision",
+        "model": "gemini-3.5-flash-lite",
+        "status": "checks_failed",
+        "input_tokens": 2245,
+        "output_tokens": 127,
+        "cost_usd": 0.000991,
+        "latency_s": 3.017,
+        "api_retries": 0,
+        "failed_checks": [
+          "core_fields_present",
+          "currency_known",
+          "totals_unverifiable",
+          "legibility_good",
+          "confidence_ok"
+        ],
+        "normalised": [],
+        "error": null
+      },
+      {
+        "attempt": 2,
+        "mode": "vision",
+        "model": "gemini-3.5-flash",
+        "status": "api_error",
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cost_usd": null,
+        "latency_s": 0.0,
+        "api_retries": 0,
+        "failed_checks": [],
+        "normalised": [],
+        "error": "quota: Daily quota exhausted for this model (429). It resets at midnight Pacific time. Use another model or key. Details: 429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://aistudio.google.com/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Q"
+      },
+      {
+        "attempt": 3,
+        "mode": "vision",
+        "model": "gemini-3.5-flash-lite",
+        "status": "checks_failed",
+        "input_tokens": 2449,
+        "output_tokens": 137,
+        "cost_usd": 0.0010772,
+        "latency_s": 4.216,
+        "api_retries": 0,
+        "failed_checks": [
+          "core_fields_present",
+          "currency_known",
+          "totals_unverifiable",
+          "legibility_good",
+          "confidence_ok"
+        ],
+        "normalised": [],
+        "error": null
+      }
+    ],
+    "input_tokens": 4694,
+    "output_tokens": 264,
+    "cost_usd": 0.0020682,
+    "latency_s": 7.687,
+    "warnings": [],
+    "prompt_version": "v1",
+    "prompt_sha": "26befab048",
+    "error": null,
+    "normalisations": []
+  }
+}

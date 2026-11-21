@@ -1,0 +1,131 @@
+{
+  "output": {
+    "is_invoice": true,
+    "vendor": "COASTAL FRESH SEAFOODS",
+    "invoice_number": "CFS-4471",
+    "invoice_date": "2026-10-14",
+    "currency": "INR",
+    "line_items": [
+      {
+        "description": "King fish (seer), cleaned, kg",
+        "quantity": 12.5,
+        "amount": 11500.0
+      },
+      {
+        "description": "Tiger prawns 16/20, kg",
+        "quantity": 18,
+        "amount": 14040.0
+      },
+      {
+        "description": "Pomfret, whole, kg",
+        "quantity": 9.5,
+        "amount": 6080.0
+      },
+      {
+        "description": "Squid, cleaned, kg",
+        "quantity": 7,
+        "amount": 2870.0
+      },
+      {
+        "description": "Crab (live), kg",
+        "quantity": 11,
+        "amount": 6160.0
+      }
+    ],
+    "tax_total": 2032.5,
+    "total": 42682.5,
+    "needs_review": false,
+    "review_reasons": []
+  },
+  "meta": {
+    "status": "ok",
+    "source_type": "scanned_pdf",
+    "final_mode": "vision",
+    "model": "gemini-3.5-flash-lite",
+    "document_type": "invoice",
+    "legibility": "good",
+    "model_confidence": 1.0,
+    "notes": null,
+    "checks": [
+      {
+        "name": "document_type_consistent",
+        "ok": true,
+        "severity": "error",
+        "detail": ""
+      },
+      {
+        "name": "core_fields_present",
+        "ok": true,
+        "severity": "error",
+        "detail": ""
+      },
+      {
+        "name": "currency_known",
+        "ok": true,
+        "severity": "warn",
+        "detail": ""
+      },
+      {
+        "name": "date_plausible",
+        "ok": true,
+        "severity": "warn",
+        "detail": ""
+      },
+      {
+        "name": "tax_plausible",
+        "ok": true,
+        "severity": "warn",
+        "detail": ""
+      },
+      {
+        "name": "totals_reconcile",
+        "ok": true,
+        "severity": "error",
+        "detail": "sum(line amounts)=40650.00 + tax_total=2032.50 = 42682.50; total=42682.50; difference=0.00; tolerance=1.00"
+      },
+      {
+        "name": "legibility_good",
+        "ok": true,
+        "severity": "warn",
+        "detail": ""
+      },
+      {
+        "name": "confidence_ok",
+        "ok": true,
+        "severity": "warn",
+        "detail": ""
+      },
+      {
+        "name": "input_quality_ok",
+        "ok": true,
+        "severity": "warn",
+        "detail": ""
+      }
+    ],
+    "attempts": [
+      {
+        "attempt": 1,
+        "mode": "vision",
+        "model": "gemini-3.5-flash-lite",
+        "status": "ok",
+        "input_tokens": 2245,
+        "output_tokens": 363,
+        "cost_usd": 0.001581,
+        "latency_s": 2.262,
+        "api_retries": 0,
+        "failed_checks": [],
+        "normalised": [],
+        "error": null
+      }
+    ],
+    "input_tokens": 2245,
+    "output_tokens": 363,
+    "cost_usd": 0.001581,
+    "latency_s": 2.334,
+    "warnings": [],
+    "prompt_version": "v1",
+    "prompt_sha": "26befab048",
+    "error": null,
+    "normalisations": []
+  }
+}
