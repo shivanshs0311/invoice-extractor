@@ -22,7 +22,7 @@ The written report is in [REPORT.md](REPORT.md).
 | Cost per document | $0.00165 at list price (1,867 input and 437 output tokens). Running the stronger model on everything would cost about 8 times more for the same accuracy |
 | Damaged scans (stress set, 30) | 14 correct; the 10 unreadable ones return an explicit `unreadable_document` error instead of a guess |
 | Review flag (stress set) | 79% precision, 94% recall: flagged documents hold 98% of the wrong fields |
-| Tests | 173, no API key needed, run on every push |
+| Tests | 174, no API key needed, run on every push |
 
 Three commands cover everything: `python extract.py <file>` (one document), `python eval.py` (the eval table) and
 `python -m uvicorn server:app --port 8000` (upload a document in the browser at http://127.0.0.1:8000).

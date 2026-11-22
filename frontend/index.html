@@ -80,6 +80,7 @@
   .stamp { margin: 12px 0 8px; padding: 10px 12px; border: 1.5px solid; border-radius: 3px; }
   .stamp.ok { color: var(--green); background: var(--green-soft); border-color: var(--green); }
   .stamp.review { color: var(--amber); background: var(--amber-soft); border-color: var(--amber); }
+  .stamp.neutral { color: var(--ink); background: #f4f6f8; border-color: var(--rule); }
   .stamp b { display: block; font-weight: 600; }
   .stamp ul { margin: 4px 0 0; padding-left: 18px; }
   .stamp p { margin: 2px 0 0; }
@@ -147,6 +148,7 @@
   .chip.ok { color: var(--green); background: var(--green-soft); }
   .chip.needs_review { color: var(--amber); background: var(--amber-soft); }
   .chip.failed { color: var(--red); background: var(--red-soft); }
+  .chip.not_invoice { color: var(--muted); background: var(--desk); }
   .none { padding: 40px 20px; text-align: center; color: var(--muted); }
   @media (max-width: 700px) {
     table.history thead { display: none; }
@@ -194,6 +196,7 @@
         <button type="button" data-filter="all" aria-pressed="true">All</button>
         <button type="button" data-filter="ok" aria-pressed="false">Passed</button>
         <button type="button" data-filter="needs_review" aria-pressed="false">Needs review</button>
+        <button type="button" data-filter="not_invoice" aria-pressed="false">Not an invoice</button>
         <button type="button" data-filter="failed" aria-pressed="false">Failed</button>
       </div>
     </div>
@@ -206,7 +209,7 @@
   "use strict";
   const $ = (s) => document.querySelector(s);
   const result = $("#result"), drop = $("#drop"), input = $("#file"), preview = $("#preview"), again = $("#again");
-  const STATUS = { ok: "Passed", needs_review: "Needs review", failed: "Failed" };
+  const STATUS = { ok: "Passed", needs_review: "Needs review", failed: "Failed", not_invoice: "Not an invoice" };
   let maxMb = 20, objectUrl = null, timer = null, items = [], filter = "all";
 
   function el(tag, attrs = {}, ...kids) {
@@ -224,7 +227,9 @@
   const fmt = (n, cur) => (n == null ? "" : new Intl.NumberFormat(cur === "INR" ? "en-IN" : "en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(n));
   const usd = (n) => (n == null ? "n/a" : "$" + (n < 0.1 ? n.toFixed(5) : n.toFixed(3)));
   const when = (iso) => new Date(iso).toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short" });
-  const chip = (status) => el("span", { class: "chip " + status }, STATUS[status] || status);
+  // "ok" means "processed with no problems"; for a non-invoice that is not the same as an invoice that passed.
+  const kind = (it) => (it.status === "ok" && it.is_invoice === false ? "not_invoice" : it.status);
+  const chip = (it) => el("span", { class: "chip " + kind(it) }, STATUS[kind(it)] || it.status);
 
   async function api(path, options) {
     const res = await fetch(path, options);
@@ -357,7 +362,9 @@
     if (output.needs_review) {
       head.append(el("div", { class: "stamp review" }, el("b", {}, "Needs a human check"), el("ul", {}, (review || []).map((r) => el("li", {}, r)))));
     } else {
-      head.append(el("div", { class: "stamp ok" }, el("b", {}, "Passed all checks"), el("p", {}, output.is_invoice ? "The format is valid, and the line items plus tax equal the total." : "This is not an invoice, so no invoice fields were extracted.")));
+      head.append(output.is_invoice
+        ? el("div", { class: "stamp ok" }, el("b", {}, "Passed all checks"), el("p", {}, "The format is valid, and the line items plus tax equal the total."))
+        : el("div", { class: "stamp neutral" }, el("b", {}, "Not an invoice"), el("p", {}, "This document was recognised and left alone: no invoice fields were extracted, so nothing wrong can be passed on.")));
     }
     if (meta.notes) head.append(el("p", { class: "fallback" }, "Note from the reader: " + meta.notes));
     nodes.push(head);
@@ -418,13 +425,13 @@
 
   function describe(it) {
     if (it.status === "failed") return el("div", { class: "what" }, el("b", {}, it.failure_title || "Could not be read"), el("span", {}, "No data extracted"));
-    if (!it.vendor && !it.invoice_number) return el("div", { class: "what" }, el("b", {}, "Not an invoice"), el("span", {}, "No invoice fields"));
+    if (it.is_invoice === false || (!it.vendor && !it.invoice_number)) return el("div", { class: "what" }, el("b", {}, "Not an invoice"), el("span", {}, "Nothing to extract"));
     return el("div", { class: "what" }, el("b", {}, it.vendor || "Vendor not found"), el("span", {}, it.invoice_number ? "Invoice " + it.invoice_number : "No invoice number"));
   }
 
   function drawHistory() {
     const q = $("#search").value.trim().toLowerCase();
-    const shown = items.filter((it) => (filter === "all" || it.status === filter) &&
+    const shown = items.filter((it) => (filter === "all" || kind(it) === filter) &&
       (!q || [it.filename, it.vendor, it.invoice_number].some((v) => v && v.toLowerCase().includes(q))));
     if (!items.length) {
       $("#history-list").replaceChildren(el("div", { class: "none" }, el("p", {}, "Nothing here yet."), el("a", { class: "btn", href: "#" }, "Check your first document")));
@@ -438,7 +445,7 @@
         el("td", { class: "file" }, it.filename),
         el("td", { class: "res" }, describe(it)),
         el("td", { class: "num" }, it.total == null ? "" : (it.currency ? it.currency + " " : "") + fmt(it.total, it.currency)),
-        el("td", { class: "st" }, chip(it.status)),
+        el("td", { class: "st" }, chip(it)),
         el("td", { class: "act" }, deleteButton(it)))))));
   }
 

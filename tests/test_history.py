@@ -21,6 +21,14 @@ def test_add_list_get_and_file(tmp_path):
     assert h.get(b)["error_code"] == "corrupt_file"
 
 
+def test_list_says_whether_a_document_is_an_invoice(tmp_path):
+    h = History(tmp_path)
+    h.add("inv.pdf", b"%PDF", result(is_invoice=True, vendor="Acme"))
+    h.add("statement.pdf", b"%PDF", result(is_invoice=False))
+    h.add("bad.pdf", b"junk", result("failed", is_invoice=None))
+    assert [r["is_invoice"] for r in h.list()] == [None, False, True]
+
+
 def test_stack_traces_are_not_stored(tmp_path):
     h = History(tmp_path)
     rec = h.get(h.add("bad.pdf", b"junk", result("failed")))

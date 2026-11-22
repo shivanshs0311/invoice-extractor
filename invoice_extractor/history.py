@@ -34,7 +34,10 @@ CREATE TABLE IF NOT EXISTS uploads (
 """
 
 # Columns shown in the history list (the full JSON is only loaded for one record at a time).
-_SUMMARY = "id, created_at, filename, status, vendor, invoice_number, total, currency, error_code, cost_usd"
+_SUMMARY = (
+    "id, created_at, filename, status, json_extract(output_json, '$.is_invoice') AS is_invoice, "
+    "vendor, invoice_number, total, currency, error_code, cost_usd"
+)
 
 
 class History:
@@ -80,7 +83,11 @@ class History:
     def list(self, limit: int = 200) -> list[dict]:
         with closing(self._connect()) as db:
             rows = db.execute(f"SELECT {_SUMMARY} FROM uploads ORDER BY id DESC LIMIT ?", (limit,)).fetchall()
-        return [dict(r) for r in rows]
+        items = [dict(r) for r in rows]
+        for item in items:  # SQLite stores JSON booleans as 1/0 (and null stays None)
+            if item["is_invoice"] is not None:
+                item["is_invoice"] = bool(item["is_invoice"])
+        return items
 
     def get(self, record_id: int) -> Optional[dict]:
         with closing(self._connect()) as db:
