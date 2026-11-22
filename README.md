@@ -237,7 +237,7 @@ To use another LLM provider, add a class with the same `extract()` signature as 
 ## Security and confidentiality
 
 - No keys are committed. `.env` is git-ignored and `.env.example` has an empty value. `python scripts/preflight.py` scans the files and the git history for keys.
-- The sample documents and labels live in `data/`, which is git-ignored, so they are not in this repository. `outputs/` holds the extracted JSON that the assignment asks for.
+- The sample documents and labels live in `data/`, which is git-ignored. Keep this repository private and share access only with the reviewers.
 - Document text is untrusted input. It is sent as data, never executed, and the frontend renders it with `textContent` only.
 
 ## Known limitations
