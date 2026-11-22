@@ -1,5 +1,7 @@
 # Invoice extraction pipeline
 
+[![tests](https://github.com/shivanshs0311/invoice-extractor/actions/workflows/tests.yml/badge.svg)](https://github.com/shivanshs0311/invoice-extractor/actions/workflows/tests.yml)
+
 Reads a vendor invoice (digital PDF, scanned PDF or phone photo) and returns validated JSON in the assignment schema.
 It checks its own work, flags documents a human should look at, and measures itself with a one-command eval.
 It runs on Google Gemini, and the free tier of a Google AI Studio key is enough to run everything here.
@@ -10,6 +12,20 @@ python eval.py
 ```
 
 The written report is in [REPORT.md](REPORT.md).
+
+## Results at a glance
+
+| What | Result |
+| --- | --- |
+| Labelled documents (10) | 10 of 10 fully correct, 100% on every field, in 3 separate runs |
+| Prompt tuning | one prompt version (v1), never edited after an eval run |
+| Cost per document | $0.00165 at list price (1,867 input and 437 output tokens). Running the stronger model on everything would cost about 8 times more for the same accuracy |
+| Damaged scans (stress set, 30) | 14 correct; the 10 unreadable ones return an explicit `unreadable_document` error instead of a guess |
+| Review flag (stress set) | 79% precision, 94% recall: flagged documents hold 98% of the wrong fields |
+| Tests | 164, no API key needed, run on every push |
+
+Three commands cover everything: `python extract.py <file>` (one document), `python eval.py` (the eval table) and
+`python -m uvicorn server:app --port 8000` (upload a document in the browser at http://127.0.0.1:8000).
 
 ## Quick start
 

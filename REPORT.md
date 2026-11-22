@@ -222,6 +222,21 @@ No errors.
 
 <!-- EVAL:END -->
 
+### Stability: three runs of the same eval
+
+Model output is not deterministic, so I ran the labelled eval three times with the same code and prompt (`python eval.py --tag run2` and `--tag run3`;
+results in `reports/runs/`).
+
+| Run | Date | Docs fully correct | Field accuracy | Avg cost / doc | Avg tokens in / out | Avg latency |
+| --- | --- | ---: | ---: | ---: | ---: | ---: |
+| default | 2026-11-21 | 10/10 | 100% | $0.00165 | 1,867 / 437 | 8.9 s |
+| run2 | 2026-11-22 | 10/10 | 100% | $0.00165 | 1,867 / 436 | 7.9 s |
+| run3 | 2026-11-22 | 10/10 | 100% | $0.00166 | 1,867 / 438 | 5.5 s |
+
+Every field was correct in all three runs. Only output tokens moved (L04 used 1,275, 1,275 and 1,301), so cost varied by a hundredth of a cent at most.
+Latency varied the most, because it depends on Google's load and 503 retries. On the clean pack the result is stable; on damaged scans it is not (see the stress
+test below, where misread characters changed between runs).
+
 ### Ablation: which input representation?
 
 All five configurations score 10 of 10 on the labelled set, so on this pack the choice is about cost, not accuracy.
