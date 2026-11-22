@@ -249,7 +249,7 @@
     const match = hash.match(/^#record\/(\d+)$/);
     if (onHistory) loadHistory();
     else if (match) openRecord(Number(match[1]));
-    else if (!hash) reset();
+    else reset(); // empty or unknown address: back to the upload page
   }
 
   /* ---------- Left pane ---------- */
@@ -301,14 +301,23 @@
     showPreview(objectUrl, file.name, file.type === "application/pdf" || /\.pdf$/i.test(file.name));
     loading();
     const body = new FormData(); body.append("file", file);
+    let record;
     try {
-      const record = await api("/api/extract", { method: "POST", body });
-      history.replaceState(null, "", "#record/" + record.id);
-      render(record);
-      refreshCount();
+      record = await api("/api/extract", { method: "POST", body });
     } catch (err) {
-      result.replaceChildren(problem("Could not reach the server", "The page could not get an answer from the extraction server.", "Check that the server window is still open, then try again.", err.message));
+      const offline = err instanceof TypeError; // fetch itself failed: nothing answered
+      result.replaceChildren(offline
+        ? problem("Could not reach the server", "The page got no answer from the extraction server.", "Check that the server window is still open, then try again.", err.message)
+        : problem("The server refused the file", err.message, "Fix the file as described, then upload it again."));
+      return;
     }
+    if (record.id == null) { // an older server.py that does not save history is still running
+      result.replaceChildren(problem("The server is out of date", "The page is newer than the server that is running, so the result could not be saved or shown.", "Close the server window, start the server again, then reload this page with Ctrl+F5."));
+      return;
+    }
+    history.replaceState(null, "", "#record/" + record.id);
+    render(record);
+    refreshCount();
   }
 
   /* ---------- One record (fresh upload or from history) ---------- */
@@ -383,7 +392,7 @@
   function details(record) {
     const { output, meta } = record;
     const json = JSON.stringify(output, null, 2);
-    const name = record.filename.replace(/\.[^.]+$/, "") + ".json";
+    const name = (record.filename || "invoice").replace(/\.[^.]+$/, "") + ".json";
     const attempts = (meta.attempts || []).map((a) => el("tr", {}, el("td", {}, String(a.attempt)), el("td", {}, a.mode + " / " + a.model), el("td", {}, a.status + (a.failed_checks && a.failed_checks.length ? " (" + a.failed_checks.join(", ") + ")" : "")), el("td", { class: "num" }, (a.input_tokens || 0).toLocaleString() + " / " + (a.output_tokens || 0).toLocaleString()), el("td", { class: "num" }, usd(a.cost_usd))));
     return el("div", {},
       record.failure ? null : el("div", { class: "actions" },
