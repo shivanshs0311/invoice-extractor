@@ -1,0 +1,127 @@
+{
+  "info": {
+    "tag": "ablation-hybrid-strong",
+    "timestamp": "2026-11-22T16:32:38",
+    "mode": "hybrid",
+    "model": "gemini-3.5-flash",
+    "escalation_model": null,
+    "prompt_version": "v1",
+    "prompt_sha": "26befab048",
+    "documents": 10,
+    "data_dir": "C:\\dev\\invoice-extractor\\data\\sample_pack",
+    "reused_predictions": true,
+    "wall_time_s": 0.0
+  },
+  "summary": {
+    "overall_field_pct": 100.0,
+    "accuracy": [
+      {
+        "field": "is_invoice",
+        "correct": 10,
+        "n": 10,
+        "pct": 100.0
+      },
+      {
+        "field": "vendor",
+        "correct": 9,
+        "n": 9,
+        "pct": 100.0
+      },
+      {
+        "field": "invoice_number",
+        "correct": 9,
+        "n": 9,
+        "pct": 100.0
+      },
+      {
+        "field": "invoice_date",
+        "correct": 9,
+        "n": 9,
+        "pct": 100.0
+      },
+      {
+        "field": "currency",
+        "correct": 9,
+        "n": 9,
+        "pct": 100.0
+      },
+      {
+        "field": "line_items (strict: every item right)",
+        "correct": 9,
+        "n": 9,
+        "pct": 100.0
+      },
+      {
+        "field": "tax_total",
+        "correct": 9,
+        "n": 9,
+        "pct": 100.0
+      },
+      {
+        "field": "total",
+        "correct": 9,
+        "n": 9,
+        "pct": 100.0
+      }
+    ],
+    "line_items": {
+      "item_f1_pct": 100.0,
+      "amount_only_f1_pct": 100.0,
+      "n": 9
+    },
+    "doc_level": {
+      "correct": 10,
+      "n": 10,
+      "pct": 100.0
+    },
+    "non_invoice": {
+      "correct": 1,
+      "n": 1
+    },
+    "by_source": [
+      {
+        "source": "digital_pdf",
+        "docs": 7,
+        "all_correct": 7,
+        "field_acc_pct": 100.0,
+        "avg_cost": 0.013253142857142857
+      },
+      {
+        "source": "image",
+        "docs": 1,
+        "all_correct": 1,
+        "field_acc_pct": 100.0,
+        "avg_cost": 0.0130335
+      },
+      {
+        "source": "scanned_pdf",
+        "docs": 2,
+        "all_correct": 2,
+        "field_acc_pct": 100.0,
+        "avg_cost": 0.0126075
+      }
+    ],
+    "cost": {
+      "avg_cost_usd": 0.01310205,
+      "total_cost_usd": 0.1310205,
+      "avg_input_tokens": 2746.7,
+      "avg_output_tokens": 998.0,
+      "avg_latency_s": 14.372399999999999,
+      "docs_with_retry": 0,
+      "docs_failed": 0,
+      "n": 10,
+      "unpriced": false
+    },
+    "review": {
+      "n": 10,
+      "flagged": 0,
+      "docs_with_errors": 0,
+      "true_positive": 0,
+      "precision_pct": null,
+      "recall_pct": null,
+      "errors_in_flagged_pct": null,
+      "total_field_errors": 0
+    },
+    "errors": []
+  }
+}

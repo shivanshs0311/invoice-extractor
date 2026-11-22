@@ -38,7 +38,7 @@ file -> ingest -> LLM (JSON schema forced) -> schema check -> sanity + totals ch
   964 thinking tokens, which is too slow and costly for the first pass.
 - **Free-tier reality.** On the free key the stronger model is limited to 20 requests per day (checked 2026-11-21), and its daily quota ran out during my runs.
   A daily quota error is not retried, because waiting cannot fix it. Instead the retry runs once on the first-pass model, still with the quoted check failures and
-  the page images. So the stronger-model path was **never measured** (see 2.6 and the ablation).
+  the page images. So the stronger model's role as the **retry** was never exercised on a real failure (see 2.6). Its quality as a first-pass model was measured once, after the quota reset (see the ablation).
 - **Input.** Digital PDFs are sent as a layout-preserving text layer, which gives exact digits for fewer tokens than images. Scans, photos and image-dominated PDFs
   are rendered to page images (EXIF rotation fixed, longest edge capped at 1600 px), because they have no usable text. `--mode text|vision|hybrid` forces one
   representation, and `scripts/ablation.py` compares them on the labelled set.
@@ -95,7 +95,7 @@ same cheap model. Of the 6 medium-damage scans with misread characters, 4 were r
 wrong, often with the same characters (the year 2026 read as 2020 again). It raised the average cost per stress document from $0.00155 to $0.00204 (+32%) and gave no accuracy gain (15 of 30 before and after).
 On severe scans it was worse: in one case the first read came back empty (it failed `core_fields_present`) and the retry returned an invented invoice
 (L06_severe came back as "Arvind & Co" with total 5830 instead of "Anand & Rao Associates" with 71673.2, at confidence 0.4). That is what led to the `unreadable_document` rule. The retry never fired on the real pack, so I have
-**no measurement that it helps at all**. It stays in the design because its purpose is the stronger model, which I could not test on the free tier.
+**no measurement that it helps at all**. It stays in the design because its purpose is the stronger model, and I could not test the stronger model as a retry on damaged scans because its free-tier quota ran out during the stress runs.
 
 ### 2.7 Overfitting disclosure
 
@@ -224,7 +224,7 @@ No errors.
 
 ### Ablation: which input representation?
 
-All four configurations that I could run score 10 of 10 on the labelled set, so on this pack the choice is about cost, not accuracy.
+All five configurations score 10 of 10 on the labelled set, so on this pack the choice is about cost, not accuracy.
 
 | Configuration | Docs fully correct | Field accuracy | Avg cost / doc | Run cost | Docs retried |
 | --- | ---: | ---: | ---: | ---: | ---: |
@@ -232,11 +232,12 @@ All four configurations that I could run score 10 of 10 on the labelled set, so 
 | text layer only, cheap model | 10/10 | 100% | $0.00165 | $0.01651 | 0/10 |
 | page images only, cheap model | 10/10 | 100% | $0.00181 | $0.01805 | 0/10 |
 | text + images, cheap model | 10/10 | 100% | $0.00192 | $0.01916 | 0/10 |
-| text + images, stronger model only | not run | - | - | - | - |
+| text + images, stronger model only | 10/10 | 100% | $0.01310 | $0.131 | 0/10 |
 
 Text-first is 9% cheaper than images only and 14% cheaper than text plus images, with the same accuracy. "Text layer only" equals the default here because the
-default also sends scans as images and text mode does the same, so those two rows differ only by run-to-run noise. The stronger-model row was not run: 10 requests
-would have used half of its 20-per-day free quota. A first text-only run lost two documents (L04 and L10) to Google 503 outages, so I re-ran only those two.
+default also sends scans as images and text mode does the same, so those two rows differ only by run-to-run noise. The stronger-model row was run on 2026-11-22, after the daily quota reset. It scores the same 10 of 10 at
+$0.01310 per document, about 8 times the default, so on this pack the stronger model buys no accuracy. (A first attempt on 2026-11-21 failed on all 10 documents
+with Google 503 errors and used no tokens, so I discarded it.) A first text-only run lost two documents (L04 and L10) to Google 503 outages, so I re-ran only those two.
 
 ### Stress test (damaged copies of the 10 labelled documents)
 
@@ -269,7 +270,7 @@ Digital PDFs had no errors anywhere: on the real pack every digital PDF was read
 **What I would fix first, and why: cause B.** It is the only cause left that returns wrong values without an error record, and it is the biggest source of
 wrong invoice numbers and amounts. The concrete change is a second independent read for scans whose legibility is not "good" (different model or a re-rendered
 higher resolution page), accepting a value only when two reads agree on invoice number, date, tax and total, and flagging otherwise. I did not build it because
-the stronger model cannot be measured on the free tier, and two reads by the same cheap model repeated the same mistakes (2.6).
+I could not measure the stronger model as a second reader on the stress set within the free-tier quota (20 requests a day), and two reads by the same cheap model repeated the same mistakes (2.6).
 
 **Does the review flag work?** On the real pack it never fired, so the real-data answer is "no evidence either way". On the stress set (`stress-final`) 19 of 30
 documents were flagged and 16 had a wrong field. Precision is 79% (15 of 19 flagged documents really had an error), recall is 94% (15 of 16 wrong documents were
@@ -294,7 +295,7 @@ and the median over all 20 documents is 7.5 s. An earlier run on a quieter API a
 dependent on Google's load, not as a property of the pipeline. Tokens and cost do not depend on it, because failed calls return no tokens.
 
 Prices used: Gemini 3.5 Flash-Lite $0.30 input and $2.50 output per million tokens (all first-pass calls). Output tokens are about 60% of the cost. At $0.00141 per
-document, 10,000 invoices cost about $14. The real bill for this project was $0 because it ran on the free tier. A scanned document costs more than a digital one
+document, 10,000 invoices cost about $14. Running the stronger model on every document instead costs $0.01310 per document (about $131 per 10,000), roughly 8 times the default on the same 10 documents, with the same accuracy. The real bill for this project was $0 because it ran on the free tier. A scanned document costs more than a digital one
 (2,245 input tokens for one page image against roughly 1,500 for a text layer).
 
 ## 7. Bonus
@@ -317,8 +318,8 @@ document, 10,000 invoices cost about $14. The real bill for this project was $0 
 - **Ambiguous dates** such as 03/04/2026 rely on context. The prompt defaults to day first outside the US and records the assumption in `notes`.
 - **Multi-page limits.** Only the first 6 pages are rendered to images, and a `truncated_pages` warning flags longer documents.
 - **Small sample.** 10 labelled documents means one document is 10 points. The stress set is 30 synthetic documents made from those same 10.
-- **Stronger model unmeasured.** The retry on the stronger model, the hybrid-strong ablation row, and the claim that it fixes misreads are all untested because of
-  the free-tier quota.
+- **The stronger-model retry is unmeasured.** The stronger model alone scored 10 of 10 at about 8 times the cost, but the retry path never fired on the real pack, and
+  I could not test whether it fixes the misreads in damaged scans, because the free-tier quota ran out during the stress runs.
 - **Non-determinism.** Model output varies between runs, and so do Google's outages (several 503 bursts during my runs). The pipeline retries them, but numbers can
   move by a document or two between runs.
 
