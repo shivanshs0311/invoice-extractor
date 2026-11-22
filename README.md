@@ -27,6 +27,18 @@ The written report is in [REPORT.md](REPORT.md).
 Three commands cover everything: `python extract.py <file>` (one document), `python eval.py` (the eval table) and
 `python -m uvicorn server:app --port 8000` (upload a document in the browser at http://127.0.0.1:8000).
 
+## Screenshots
+
+| A clean invoice passes every check | A misread total is caught and explained |
+| --- | --- |
+| ![Passed](docs/screenshots/1-passed.png) | ![Needs review](docs/screenshots/2-needs-review.png) |
+| **A broken file gets a plain explanation, not a stack trace** | **Every upload is kept in a searchable history** |
+| ![Clear error](docs/screenshots/3-clear-error.png) | ![History](docs/screenshots/4-history.png) |
+
+These invoices are synthetic, made for this README, and the model was replaced by a test double so the screenshots are
+reproducible. The flagged example is a staged misread (the photo says 7,198.00, the reading says 7,918.00) to show what a
+reviewer sees when the totals check fails. Real results on the sample pack are in [REPORT.md](REPORT.md).
+
 ## Quick start
 
 Needs Python 3.10 or newer and a Gemini API key. A free key (no card) comes from https://aistudio.google.com/apikey
