@@ -18,6 +18,9 @@ from .schema import INVOICE_ONLY_FIELDS, Extraction
 
 CORE_FIELDS = ("vendor", "invoice_number", "invoice_date", "total")
 
+# Ingest warnings that make the input itself less trustworthy.
+RISKY_INPUT_WARNINGS = {"truncated_pages", "truncated_text", "low_resolution", "poor_text_layer", "repaired_pdf"}
+
 KNOWN_CURRENCIES = {
     "INR", "USD", "EUR", "GBP", "AUD", "CAD", "SGD", "AED", "JPY", "CNY", "CHF", "SEK", "NOK", "DKK",
     "NZD", "HKD", "ZAR", "SAR", "QAR", "KWD", "BHD", "OMR", "MYR", "THB", "IDR", "PHP", "KRW", "BRL",
@@ -102,85 +105,56 @@ def run_checks(
     source_warnings: Optional[list[str]] = None,
     today: Optional[date] = None,
 ) -> ValidationReport:
-    today = today or date.today()
-    report = ValidationReport()
-    add = report.checks.append
-
     consistent = ext.is_invoice == (ext.document_type == "invoice")
-    add(
-        Check(
-            "document_type_consistent",
-            consistent,
-            "error",
-            "" if consistent else f"is_invoice={ext.is_invoice} but document_type={ext.document_type}",
-        )
-    )
-
-    if not ext.is_invoice:
-        leftovers = [f for f in INVOICE_ONLY_FIELDS if getattr(ext, f) not in (None, [])]
-        add(
-            Check(
-                "non_invoice_fields_null",
-                not leftovers,
-                "warn",
-                "" if not leftovers else f"model returned values for a non-invoice, they were nulled: {leftovers}",
-            )
-        )
+    checks = [
+        _check("document_type_consistent", consistent, "error", f"is_invoice={ext.is_invoice} but document_type={ext.document_type}")
+    ]
+    if ext.is_invoice:
+        checks += _invoice_checks(ext, settings, today or date.today())
     else:
-        missing = [f for f in CORE_FIELDS if getattr(ext, f) is None]
-        if not ext.line_items:
-            missing.append("line_items")
-        add(Check("core_fields_present", not missing, "error", "" if not missing else f"missing: {missing}"))
+        checks.append(_non_invoice_check(ext))
+    checks += _quality_checks(ext, settings, source_warnings or [])
+    return ValidationReport(checks)
 
-        currency_ok = ext.currency is not None and ext.currency in KNOWN_CURRENCIES
-        add(
-            Check(
-                "currency_known",
-                currency_ok,
-                "warn",
-                "" if currency_ok else f"currency is {ext.currency!r}, not a recognised ISO 4217 code",
-            )
-        )
 
-        if ext.invoice_date is not None:
-            plausible = date(2000, 1, 1) <= ext.invoice_date <= today + timedelta(days=1)
-            add(
-                Check(
-                    "date_plausible",
-                    plausible,
-                    "warn",
-                    "" if plausible else f"invoice_date {ext.invoice_date} is outside 2000-01-01..today",
-                )
-            )
+def _check(name: str, ok: bool, severity: str, problem: str) -> Check:
+    """A check that keeps its explanation only when it fails."""
+    return Check(name, ok, severity, "" if ok else problem)
 
-        if ext.tax_total is not None and ext.total is not None:
-            sane = 0 <= ext.tax_total <= abs(ext.total)
-            add(
-                Check(
-                    "tax_plausible",
-                    sane,
-                    "warn",
-                    "" if sane else f"tax_total={ext.tax_total:.2f} looks wrong next to total={ext.total:.2f}",
-                )
-            )
 
-        add(check_totals(ext, settings.total_tolerance))
+def _invoice_checks(ext: Extraction, settings: Settings, today: date) -> list[Check]:
+    missing = [f for f in CORE_FIELDS if getattr(ext, f) is None] + ([] if ext.line_items else ["line_items"])
+    checks = [
+        _check("core_fields_present", not missing, "error", f"missing: {missing}"),
+        _check("currency_known", ext.currency in KNOWN_CURRENCIES, "warn", f"currency is {ext.currency!r}, not a recognised ISO 4217 code"),
+    ]
+    if ext.invoice_date is not None:
+        plausible = date(2000, 1, 1) <= ext.invoice_date <= today + timedelta(days=1)
+        checks.append(_check("date_plausible", plausible, "warn", f"invoice_date {ext.invoice_date} is outside 2000-01-01..today"))
+    if ext.tax_total is not None and ext.total is not None:
+        sane = 0 <= ext.tax_total <= abs(ext.total)
+        checks.append(_check("tax_plausible", sane, "warn", f"tax_total={ext.tax_total:.2f} looks wrong next to total={ext.total:.2f}"))
+    checks.append(check_totals(ext, settings.total_tolerance))
+    return checks
 
-    clear = ext.legibility == "good"
-    add(Check("legibility_good", clear, "warn", "" if clear else f"model reports legibility={ext.legibility}"))
-    confident = ext.confidence >= settings.min_confidence
-    add(
-        Check(
+
+def _non_invoice_check(ext: Extraction) -> Check:
+    leftovers = [f for f in INVOICE_ONLY_FIELDS if getattr(ext, f) not in (None, [])]
+    return _check("non_invoice_fields_null", not leftovers, "warn", f"model returned values for a non-invoice, they were nulled: {leftovers}")
+
+
+def _quality_checks(ext: Extraction, settings: Settings, source_warnings: list[str]) -> list[Check]:
+    risky = [w for w in source_warnings if w in RISKY_INPUT_WARNINGS]
+    return [
+        _check("legibility_good", ext.legibility == "good", "warn", f"model reports legibility={ext.legibility}"),
+        _check(
             "confidence_ok",
-            confident,
+            ext.confidence >= settings.min_confidence,
             "warn",
-            "" if confident else f"model confidence {ext.confidence:.2f} < {settings.min_confidence:.2f}",
-        )
-    )
-
-    risky = [w for w in (source_warnings or []) if w in {"truncated_pages", "truncated_text", "low_resolution", "poor_text_layer", "repaired_pdf"}]
-    add(Check("input_quality_ok", not risky, "warn", "" if not risky else f"input issues: {risky}"))
-    return report
+            f"model confidence {ext.confidence:.2f} < {settings.min_confidence:.2f}",
+        ),
+        _check("input_quality_ok", not risky, "warn", f"input issues: {risky}"),
+    ]
 
 
 # --------------------------------------------------------------------------- #
@@ -210,9 +184,9 @@ def normalise_tax(ext: Extraction, tolerance: float) -> tuple[Extraction, list[s
     add up to the total, tax really is zero, so we record 0 and say so. Anything else stays null and is
     caught by the normal checks.
     """
-    if ext.is_invoice and ext.tax_total is None and ext.line_items and ext.total is not None:
-        if abs(sum(item.amount for item in ext.line_items) - ext.total) <= tolerance:
-            return ext.model_copy(update={"tax_total": 0.0}), ["tax_total set to 0: no tax printed and the line items add up to the total"]
+    no_tax_given = ext.is_invoice and ext.tax_total is None and ext.line_items and ext.total is not None
+    if no_tax_given and abs(sum(item.amount for item in ext.line_items) - ext.total) <= tolerance:
+        return ext.model_copy(update={"tax_total": 0.0}), ["tax_total set to 0: no tax printed and the line items add up to the total"]
     return ext, []
 
 

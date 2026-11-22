@@ -18,13 +18,10 @@ from pydantic import (
     BaseModel,
     BeforeValidator,
     ConfigDict,
-    Field,
     field_serializer,
     field_validator,
     model_validator,
 )
-
-TOOL_NAME = "record_extraction"
 
 DocType = Literal["invoice", "purchase_order", "quotation", "bank_statement", "cover_letter", "other"]
 Legibility = Literal["good", "fair", "poor"]
@@ -172,7 +169,7 @@ class Invoice(BaseModel):
     total: Optional[float] = None
 
     @model_validator(mode="after")
-    def _non_invoice_means_null(self) -> "Invoice":
+    def _non_invoice_means_null(self) -> Invoice:
         if not self.is_invoice:
             leftovers = [f for f in INVOICE_ONLY_FIELDS if getattr(self, f) is not None]
             if leftovers:
@@ -184,7 +181,7 @@ class Invoice(BaseModel):
         return None if v is None else round(v, 2)
 
     @classmethod
-    def from_extraction(cls, ext: Extraction) -> "Invoice":
+    def from_extraction(cls, ext: Extraction) -> Invoice:
         if not ext.is_invoice:
             return cls(is_invoice=False)
         return cls(**{name: getattr(ext, name) for name in PUBLIC_FIELDS})

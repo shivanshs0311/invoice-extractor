@@ -14,7 +14,8 @@ from dataclasses import dataclass, field
 from datetime import date, datetime
 from difflib import SequenceMatcher
 from pathlib import Path
-from typing import Any, Callable, Optional
+from typing import Any, Optional
+from collections.abc import Callable
 
 from .config import ROOT, Settings
 from .data_io import load_labels
@@ -165,39 +166,58 @@ def _pct(num: int, den: int) -> Optional[float]:
 def summarize(docs: list[DocEval]) -> dict:
     invoices = [d for d in docs if d.gt_is_invoice]
     non_invoices = [d for d in docs if not d.gt_is_invoice]
-
-    rows = []
-    rows.append(("is_invoice", sum(d.fields["is_invoice"] for d in docs), len(docs)))
-    for f in ["vendor", "invoice_number", "invoice_date", "currency"]:
-        rows.append((f, sum(d.fields[f] for d in invoices), len(invoices)))
-    rows.append(("line_items (strict: every item right)", sum(d.fields["line_items"] for d in invoices), len(invoices)))
-    for f in ["tax_total", "total"]:
-        rows.append((f, sum(d.fields[f] for d in invoices), len(invoices)))
-    accuracy = [{"field": f, "correct": c, "n": n, "pct": _pct(c, n)} for f, c, n in rows]
-
-    def mean(values: list[float]) -> Optional[float]:
-        return None if not values else 100.0 * sum(values) / len(values)
-
-    line_items = {
-        "item_f1_pct": mean([d.li.f1 for d in invoices]),
-        "amount_only_f1_pct": mean([d.li.amount_f1 for d in invoices]),
-        "n": len(invoices),
-    }
     exact = sum(d.all_correct for d in docs)
-    non_inv = {
-        "correct": sum(d.fields["is_invoice"] and d.pred.get("vendor") is None and d.pred.get("total") is None for d in non_invoices),
-        "n": len(non_invoices),
+    applicable = _applicable_fields(docs)
+    return {
+        "overall_field_pct": _pct(sum(applicable), len(applicable)),
+        "accuracy": _field_accuracy(docs, invoices),
+        "line_items": {
+            "item_f1_pct": _mean_pct([d.li.f1 for d in invoices]),
+            "amount_only_f1_pct": _mean_pct([d.li.amount_f1 for d in invoices]),
+            "n": len(invoices),
+        },
+        "doc_level": {"correct": exact, "n": len(docs), "pct": _pct(exact, len(docs))},
+        "non_invoice": {
+            "correct": sum(
+                d.fields["is_invoice"] and d.pred.get("vendor") is None and d.pred.get("total") is None for d in non_invoices
+            ),
+            "n": len(non_invoices),
+        },
+        "by_source": _by_source(docs),
+        "cost": _cost_summary(docs),
+        "review": _review_summary(docs),
+        "errors": [e for d in docs for e in d.errors],
     }
 
-    by_source: dict[str, list[DocEval]] = {}
+
+def _applicable_fields(docs: list[DocEval]) -> list[bool]:
+    """Every field that counts: all 8 for a labelled invoice, only is_invoice for a non-invoice."""
+    return [d.fields[f] for d in docs if d.gt_is_invoice for f in FIELD_ORDER] + [
+        d.fields["is_invoice"] for d in docs if not d.gt_is_invoice
+    ]
+
+
+def _mean_pct(values: list[float]) -> Optional[float]:
+    return None if not values else 100.0 * sum(values) / len(values)
+
+
+def _field_accuracy(docs: list[DocEval], invoices: list[DocEval]) -> list[dict]:
+    """is_invoice is scored on every document; the other fields only on labelled invoices."""
+    rows = [("is_invoice", sum(d.fields["is_invoice"] for d in docs), len(docs))]
+    for f in FIELD_ORDER[1:]:
+        label = "line_items (strict: every item right)" if f == "line_items" else f
+        rows.append((label, sum(d.fields[f] for d in invoices), len(invoices)))
+    return [{"field": f, "correct": c, "n": n, "pct": _pct(c, n)} for f, c, n in rows]
+
+
+def _by_source(docs: list[DocEval]) -> list[dict]:
+    groups: dict[str, list[DocEval]] = {}
     for d in docs:
-        by_source.setdefault(d.source_type, []).append(d)
-    source_rows = []
-    for src, items in sorted(by_source.items()):
-        applicable = [(d.fields[f]) for d in items if d.gt_is_invoice for f in FIELD_ORDER] + [
-            d.fields["is_invoice"] for d in items if not d.gt_is_invoice
-        ]
-        source_rows.append(
+        groups.setdefault(d.source_type, []).append(d)
+    rows = []
+    for src, items in sorted(groups.items()):
+        applicable = _applicable_fields(items)
+        rows.append(
             {
                 "source": src,
                 "docs": len(items),
@@ -206,47 +226,40 @@ def summarize(docs: list[DocEval]) -> dict:
                 "avg_cost": _avg([d.meta.get("cost_usd") for d in items]),
             }
         )
+    return rows
 
+
+def _cost_summary(docs: list[DocEval]) -> dict:
     costs = [d.meta.get("cost_usd") for d in docs]
-    cost = {
+    unpriced = any(c is None for c in costs)
+    return {
         "avg_cost_usd": _avg(costs),
-        "total_cost_usd": None if any(c is None for c in costs) else sum(costs),
+        "total_cost_usd": None if unpriced else sum(costs),
         "avg_input_tokens": _avg([d.meta.get("input_tokens", 0) for d in docs]),
         "avg_output_tokens": _avg([d.meta.get("output_tokens", 0) for d in docs]),
         "avg_latency_s": _avg([d.meta.get("latency_s", 0.0) for d in docs]),
         "docs_with_retry": sum(len(d.meta.get("attempts", [])) > 1 for d in docs),
         "docs_failed": sum(d.meta.get("status") == "failed" for d in docs),
         "n": len(docs),
-        "unpriced": any(c is None for c in costs),
+        "unpriced": unpriced,
     }
 
-    has_error = [d for d in docs if not d.all_correct]
+
+def _review_summary(docs: list[DocEval]) -> dict:
+    """Does the needs_review flag land on the documents that actually have errors?"""
     flagged = [d for d in docs if d.flagged]
-    tp = sum(1 for d in docs if d.flagged and not d.all_correct)
+    with_errors = [d for d in docs if not d.all_correct]
+    true_pos = sum(1 for d in flagged if not d.all_correct)
     total_field_errors = sum(len(d.errors) for d in docs)
-    review = {
+    return {
         "n": len(docs),
         "flagged": len(flagged),
-        "docs_with_errors": len(has_error),
-        "true_positive": tp,
-        "precision_pct": _pct(tp, len(flagged)),
-        "recall_pct": _pct(tp, len(has_error)),
+        "docs_with_errors": len(with_errors),
+        "true_positive": true_pos,
+        "precision_pct": _pct(true_pos, len(flagged)),
+        "recall_pct": _pct(true_pos, len(with_errors)),
         "errors_in_flagged_pct": _pct(sum(len(d.errors) for d in flagged), total_field_errors),
         "total_field_errors": total_field_errors,
-    }
-
-    applicable_all = [d.fields[f] for d in invoices for f in FIELD_ORDER] + [d.fields["is_invoice"] for d in non_invoices]
-    errors = [e for d in docs for e in d.errors]
-    return {
-        "overall_field_pct": _pct(sum(applicable_all), len(applicable_all)),
-        "accuracy": accuracy,
-        "line_items": line_items,
-        "doc_level": {"correct": exact, "n": len(docs), "pct": _pct(exact, len(docs))},
-        "non_invoice": non_inv,
-        "by_source": source_rows,
-        "cost": cost,
-        "review": review,
-        "errors": errors,
     }
 
 
@@ -287,34 +300,15 @@ def run_eval(
         )
 
     paths = list(label_map)
-    run_dir = reports_dir / "runs" / tag
-    pred_dir = run_dir / "predictions"
+    pred_dir = reports_dir / "runs" / tag / "predictions"
     pred_dir.mkdir(parents=True, exist_ok=True)
     started = time.perf_counter()
-
     if reuse:
-        results = []
-        for p in paths:
-            f = pred_dir / f"{p.name}.json"
-            if not f.exists():
-                raise EvalSetupError(f"--reuse needs saved predictions, but {f} is missing. Run once without --reuse.")
-            saved = json.loads(f.read_text(encoding="utf-8"))
-            results.append(ExtractionResult(output=saved["output"], meta=saved["meta"]))
+        results = _load_predictions(paths, pred_dir)
         say(f"Loaded {len(results)} saved predictions from {pred_dir}")
     else:
-        done = 0
-
-        def progress_cb(i: int, path: Path, res: ExtractionResult) -> None:
-            nonlocal done
-            done += 1
-            say(f"  [{done}/{len(paths)}] {path.name}: {res.status}")
-
         say(f"Running extractor on {len(paths)} labelled document(s), mode={settings.mode}, model={settings.model}")
-        results = extract_many(paths, settings, client, workers=workers, progress=progress_cb)
-        for p, res in zip(paths, results):
-            (pred_dir / f"{p.name}.json").write_text(
-                json.dumps({"output": res.output, "meta": res.meta}, indent=2, ensure_ascii=False), encoding="utf-8"
-            )
+        results = _predict_and_save(paths, pred_dir, settings, client, workers, say)
 
     docs = [score_document(p.name, r.output, label_map[p], r.meta) for p, r in zip(paths, results)]
     info = {
@@ -331,6 +325,35 @@ def run_eval(
         "wall_time_s": round(time.perf_counter() - started, 1),
     }
     return docs, info
+
+
+def _load_predictions(paths: list[Path], pred_dir: Path) -> list[ExtractionResult]:
+    """--reuse: score the predictions saved by an earlier run, with no API calls."""
+    results = []
+    for p in paths:
+        f = pred_dir / f"{p.name}.json"
+        if not f.exists():
+            raise EvalSetupError(f"--reuse needs saved predictions, but {f} is missing. Run once without --reuse.")
+        saved = json.loads(f.read_text(encoding="utf-8"))
+        results.append(ExtractionResult(output=saved["output"], meta=saved["meta"]))
+    return results
+
+
+def _predict_and_save(paths, pred_dir, settings, client, workers, say) -> list[ExtractionResult]:
+    """Run the extractor and save every prediction, so a later --reuse can re-score it for free."""
+    done = 0
+
+    def progress_cb(i: int, path: Path, res: ExtractionResult) -> None:
+        nonlocal done
+        done += 1
+        say(f"  [{done}/{len(paths)}] {path.name}: {res.status}")
+
+    results = extract_many(paths, settings, client, workers=workers, progress=progress_cb)
+    for p, res in zip(paths, results):
+        (pred_dir / f"{p.name}.json").write_text(
+            json.dumps({"output": res.output, "meta": res.meta}, indent=2, ensure_ascii=False), encoding="utf-8"
+        )
+    return results
 
 
 # --------------------------------------------------------------------------- #
@@ -384,11 +407,11 @@ def _tables(docs: list[DocEval], s: dict, markdown: bool) -> dict[str, str]:
     acc_rows.append(["ALL fields correct (whole document)", f"{dl['correct']}/{dl['n']}", _fmt_pct(dl["pct"])])
     accuracy = render(["Field", "Correct", "Accuracy"], acc_rows, right={1, 2})
 
+    def cell(d: DocEval, f: str) -> str:
+        return mark(d.fields[f]) if (d.gt_is_invoice or f == "is_invoice") else "-"
+
     doc_rows = []
     for d in docs:
-        def cell(f: str) -> str:
-            return mark(d.fields[f]) if (d.gt_is_invoice or f == "is_invoice") else "-"
-
         tokens = f"{d.meta.get('input_tokens', 0):,}/{d.meta.get('output_tokens', 0):,}"
         doc_rows.append(
             [
@@ -396,14 +419,7 @@ def _tables(docs: list[DocEval], s: dict, markdown: bool) -> dict[str, str]:
                 d.source_type,
                 d.meta.get("status", "?"),
                 "yes" if d.flagged else "no",
-                cell("is_invoice"),
-                cell("vendor"),
-                cell("invoice_number"),
-                cell("invoice_date"),
-                cell("currency"),
-                cell("line_items"),
-                cell("tax_total"),
-                cell("total"),
+                *(cell(d, f) for f in FIELD_ORDER),
                 _fmt_usd(d.meta.get("cost_usd")),
                 tokens,
                 str(len(d.meta.get("attempts", []))),

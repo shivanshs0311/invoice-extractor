@@ -1,7 +1,7 @@
 {
   "info": {
     "tag": "default",
-    "timestamp": "2026-11-21T17:57:22",
+    "timestamp": "2026-11-22T21:50:52",
     "mode": "auto",
     "model": "gemini-3.5-flash-lite",
     "escalation_model": "gemini-3.5-flash",
@@ -9,8 +9,8 @@
     "prompt_sha": "26befab048",
     "documents": 10,
     "data_dir": "C:\\dev\\invoice-extractor\\data\\sample_pack",
-    "reused_predictions": false,
-    "wall_time_s": 48.8
+    "reused_predictions": true,
+    "wall_time_s": 0.0
   },
   "summary": {
     "overall_field_pct": 100.0,

@@ -52,7 +52,7 @@ class Settings:
     total_tolerance: float = 0.05
     min_confidence: float = 0.7  # self-reported confidence below this => needs_review
 
-    def with_overrides(self, **kwargs) -> "Settings":
+    def with_overrides(self, **kwargs) -> Settings:
         clean = {k: v for k, v in kwargs.items() if v is not None}
         return replace(self, **clean) if clean else self
 

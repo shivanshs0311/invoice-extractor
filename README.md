@@ -242,7 +242,7 @@ invoice_extractor/
   matching.py            eval matching rules
   evaluate.py            scoring, aggregation, tables, REPORT.md updater
   data_io.py             finds documents and labels in any folder layout
-scripts/                 ablation, stress, preflight, and small inspection and probe helpers
+scripts/                 ablation, stress test and preflight check
 tests/                   unit tests, including the real SDK against a local fake server
 outputs/                 JSON for all 20 documents (written by extract.py)
 reports/                 eval runs (reports/runs/<tag>/results.md, predictions/)

@@ -11,7 +11,8 @@ import re
 import statistics
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Callable, Optional
+from typing import Optional
+from collections.abc import Callable
 
 try:  # PyMuPDF >= 1.24.3 exposes `pymupdf`; older releases only expose `fitz`.
     import pymupdf as fitz
@@ -118,7 +119,8 @@ def load_document(path: str | Path, settings: Settings) -> LoadedDocument:
     if kind is None:
         raise IngestError(
             "unsupported_type",
-            f"Unrecognised file type (extension {p.suffix or 'none'}). Supported: PDF, PNG, JPG, WEBP, TIFF, BMP.",
+            f"The file content is not a supported type (the name ends in {p.suffix or 'nothing'}, but the bytes are not "
+            "a PDF or an image). Supported: PDF, PNG, JPG, WEBP, TIFF, BMP.",
         )
     if kind == "pdf":
         return _load_pdf(p, raw, settings)

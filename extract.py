@@ -61,9 +61,22 @@ def main(argv: list[str] | None = None) -> int:
         escalation_model=args.escalation_model,
         escalate=False if args.no_escalate else None,
     )
+    paths = _collect_paths(args.inputs)
+    if not paths:
+        print("error: nothing to process", file=sys.stderr)
+        return 1
+    try:
+        if len(paths) == 1 and not Path(args.inputs[0]).is_dir():
+            return _run_single(paths[0], settings, args)
+        return _run_batch(paths, settings, args)
+    except LLMError as exc:  # configuration problem, e.g. a missing API key
+        print(f"error: {exc}", file=sys.stderr)
+        return 1
 
+
+def _collect_paths(inputs: list[str]) -> list[Path]:
     paths: list[Path] = []
-    for item in args.inputs:
+    for item in inputs:
         found = discover_documents(item)
         if not found:
             if Path(item).is_file():
@@ -71,60 +84,38 @@ def main(argv: list[str] | None = None) -> int:
             else:
                 print(f"warning: no documents found at {item}", file=sys.stderr)
         paths.extend(found)
-    if not paths:
-        print("error: nothing to process", file=sys.stderr)
-        return 1
+    return paths
 
-    try:
-        if len(paths) == 1 and not Path(args.inputs[0]).is_dir():
-            res = extract_document(paths[0], settings)
-            payload = res.public_json(with_review=args.with_review)
-            if args.meta:
-                payload = {**payload, "_meta": res.meta}
-            text = _dump(payload, to_file=bool(args.out))
-            if args.out:
-                Path(args.out).parent.mkdir(parents=True, exist_ok=True)
-                Path(args.out).write_text(text + "\n", encoding="utf-8")
-            else:
-                print(text)
-            print(_log_line(paths[0].name, res), file=sys.stderr)
-            return 2 if res.status == "failed" else 0
 
-        out_dir = Path(args.out_dir)
-        out_dir.mkdir(parents=True, exist_ok=True)
-        stems = [p.stem for p in paths]
-        names = [p.name if stems.count(p.stem) > 1 else p.stem for p in paths]  # avoid stem collisions
+def _run_single(path: Path, settings, args) -> int:
+    res = extract_document(path, settings)
+    payload = res.public_json(with_review=args.with_review)
+    if args.meta:
+        payload = {**payload, "_meta": res.meta}
+    text = _dump(payload, to_file=bool(args.out))
+    if args.out:
+        Path(args.out).parent.mkdir(parents=True, exist_ok=True)
+        Path(args.out).write_text(text + "\n", encoding="utf-8")
+    else:
+        print(text)
+    print(_log_line(path.name, res), file=sys.stderr)
+    return 2 if res.status == "failed" else 0
 
-        def progress(i: int, path: Path, res: ExtractionResult) -> None:
-            print(f"[done] {_log_line(path.name, res)}", file=sys.stderr)
 
-        results = extract_many(paths, settings, workers=args.workers, progress=progress)
-    except LLMError as exc:
-        print(f"error: {exc}", file=sys.stderr)
-        return 1
+def _run_batch(paths: list[Path], settings, args) -> int:
+    out_dir = Path(args.out_dir)
+    out_dir.mkdir(parents=True, exist_ok=True)
+    stems = [p.stem for p in paths]
+    names = [p.name if stems.count(p.stem) > 1 else p.stem for p in paths]  # avoid stem collisions
 
-    log = []
-    for path, name, res in zip(paths, names, results):
-        (out_dir / f"{name}.json").write_text(
-            _dump(res.public_json(with_review=args.with_review), to_file=True) + "\n", encoding="utf-8"
-        )
-        log.append(
-            {
-                "file": path.name,
-                "status": res.status,
-                "needs_review": res.output.get("needs_review"),
-                "review_reasons": res.output.get("review_reasons"),
-                "source_type": res.meta.get("source_type"),
-                "model": res.meta.get("model"),
-                "final_mode": res.meta.get("final_mode"),
-                "attempts": len(res.meta.get("attempts", [])),
-                "input_tokens": res.meta.get("input_tokens"),
-                "output_tokens": res.meta.get("output_tokens"),
-                "cost_usd": res.meta.get("cost_usd"),
-                "latency_s": res.meta.get("latency_s"),
-                "error": res.meta.get("error"),
-            }
-        )
+    def progress(i: int, path: Path, res: ExtractionResult) -> None:
+        print(f"[done] {_log_line(path.name, res)}", file=sys.stderr)
+
+    results = extract_many(paths, settings, workers=args.workers, progress=progress)
+    for name, res in zip(names, results):
+        text = _dump(res.public_json(with_review=args.with_review), to_file=True)
+        (out_dir / f"{name}.json").write_text(text + "\n", encoding="utf-8")
+    log = [_log_entry(path, res) for path, res in zip(paths, results)]
     (out_dir / "_run_log.json").write_text(json.dumps(log, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
 
     n = len(results)
@@ -137,6 +128,26 @@ def main(argv: list[str] | None = None) -> int:
         file=sys.stderr,
     )
     return 0
+
+
+def _log_entry(path: Path, res: ExtractionResult) -> dict:
+    """One row of outputs/_run_log.json: the review flag and cost that the 8-field JSON cannot carry."""
+    meta = res.meta
+    return {
+        "file": path.name,
+        "status": res.status,
+        "needs_review": res.output.get("needs_review"),
+        "review_reasons": res.output.get("review_reasons"),
+        "source_type": meta.get("source_type"),
+        "model": meta.get("model"),
+        "final_mode": meta.get("final_mode"),
+        "attempts": len(meta.get("attempts", [])),
+        "input_tokens": meta.get("input_tokens"),
+        "output_tokens": meta.get("output_tokens"),
+        "cost_usd": meta.get("cost_usd"),
+        "latency_s": meta.get("latency_s"),
+        "error": meta.get("error"),
+    }
 
 
 if __name__ == "__main__":

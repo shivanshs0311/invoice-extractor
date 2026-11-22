@@ -3,7 +3,7 @@
 | Setting | Value |
 | --- | --- |
 | Run tag | default |
-| When | 2026-11-21T17:57:22 |
+| When | 2026-11-22T21:50:52 |
 | Documents scored | 10 |
 | Mode | auto |
 | Model | gemini-3.5-flash-lite |
