@@ -22,7 +22,7 @@ The written report is in [REPORT.md](REPORT.md).
 | Cost per document | $0.00165 at list price (1,867 input and 437 output tokens). Running the stronger model on everything would cost about 8 times more for the same accuracy |
 | Damaged scans (stress set, 30) | 14 correct; the 10 unreadable ones return an explicit `unreadable_document` error instead of a guess |
 | Review flag (stress set) | 79% precision, 94% recall: flagged documents hold 98% of the wrong fields |
-| Tests | 164, no API key needed, run on every push |
+| Tests | 173, no API key needed, run on every push |
 
 Three commands cover everything: `python extract.py <file>` (one document), `python eval.py` (the eval table) and
 `python -m uvicorn server:app --port 8000` (upload a document in the browser at http://127.0.0.1:8000).
@@ -96,8 +96,15 @@ python scripts/preflight.py          # pre-submission checklist
 python -m uvicorn server:app --port 8000
 ```
 
-Open http://127.0.0.1:8000, drop a document, and see the original next to the extracted fields, the "does it add up" tape,
-the review reasons, and what each model call cost.
+Open http://127.0.0.1:8000 and drop a document. You see:
+
+- the original next to the extracted fields, the "does it add up" check and why a document needs review;
+- for a file that could not be read: what happened, why, and what to do, in plain words (technical details are folded away);
+- a **History** tab with every earlier upload: search by file, vendor or invoice number, filter by Passed, Needs review or Failed,
+  reopen any record next to its original file, download its JSON, or delete it.
+
+History is stored in `data/history/` (a SQLite file plus the uploaded files). That folder is git-ignored because invoices are
+confidential. Set `HISTORY_DIR` to keep it somewhere else.
 
 ### Tests
 
@@ -137,6 +144,9 @@ file --> ingest --> LLM (JSON schema forced) --> schema check --> sanity + total
 | Public schema separate from the LLM schema | The model also returns `document_type`, `legibility`, `confidence`, `notes`. They feed validation and review flags and are stripped from the public output. |
 | Own retry loop, SDK retries off | Every retry is counted, printed to the terminal and visible in the run log. |
 | Document text treated as untrusted | The system prompt says to never follow instructions found inside a document. |
+
+The full list of decisions, each with the alternative it was chosen over (including dedicated invoice APIs, OCR plus templates,
+and the database for the history), is in [REPORT.md section 2.8](REPORT.md).
 
 ### Free tier
 
@@ -239,6 +249,8 @@ invoice_extractor/
   llm.py                 client interface, Gemini implementation, retry with backoff
   validate.py            schema and totals checks, review reasons
   pipeline.py            orchestration, retry and fallback, graceful failure
+  explain.py             plain-language text for every error code and review reason
+  history.py             upload history (SQLite) used by the API
   matching.py            eval matching rules
   evaluate.py            scoring, aggregation, tables, REPORT.md updater
   data_io.py             finds documents and labels in any folder layout

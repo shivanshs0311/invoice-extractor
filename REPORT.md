@@ -116,6 +116,28 @@ Independent check: I compared all 10 unlabelled outputs against the source docum
 and found no wrong field. The final release run produced identical JSON for all 10 of them. The arithmetic also reconciles exactly on all 8 invoices, and U04, U09 and the labelled L03 are confirmed by payments on the U06 bank
 statement (same invoice numbers and amounts).
 
+### 2.8 Design decisions: what I chose, and what I chose it over
+
+Each row is a decision, the main alternative, and the evidence or reason that decided it. Prices for the alternatives were checked on
+the providers' pricing pages on 2026-11-22 ([AWS Textract](https://aws.amazon.com/textract/pricing/),
+[Google Document AI](https://cloud.google.com/document-ai/pricing)).
+
+| Decision | Alternative considered | Why this one |
+| --- | --- | --- |
+| A general LLM (Gemini) reads the document | A dedicated invoice API: AWS Textract AnalyzeExpense ($0.01 per page) or Google Document AI Invoice Parser ($0.10 per 1 to 10 pages) | One prompt handles any layout, the target schema and the "is this an invoice at all" question. At $0.00165 per document it costs about a sixth of Textract and a sixtieth of Document AI for a one-page invoice. The price is that an LLM can invent values, which is why the code validates every answer. |
+| The LLM reads the document directly | OCR (for example Tesseract) plus regular expressions or per-vendor templates | Templates break on every new vendor layout, and OCR adds its own misreads plus a system dependency. The vision model reads scans and photos itself. |
+| Cheap model first, stronger model only on a failed check | The stronger model on every document | Measured: both score 10 of 10 on the labelled set, and the stronger model costs about 8 times more (section 4, ablation). |
+| Text layer for digital PDFs, page images for scans | Images for everything | Measured: same accuracy, text-first is 9% cheaper than images only and 14% cheaper than text plus images. A text layer also has the exact digits. |
+| Forced JSON schema in the API call | Asking for JSON in the prompt and parsing the reply | The reply is always a JSON object of the right shape, so there is no free-text parsing. Pydantic then checks types and values. |
+| Pydantic for validation, plus the official `schema.json` in tests | JSON Schema only | Pydantic gives typed objects and cleans formats such as "1,200.00" into 1200.0 in one place. The official schema is still checked on every output file by the tests and `scripts/preflight.py`. |
+| Absolute totals tolerance of 0.05 | A percentage tolerance, or 1.00 | A 1.00 tolerance hid a misread digit that was off by 0.80 (section 5). Printed amounts are exact to the cent. |
+| One retry with the failed checks quoted back | No retry, or several retries on the same model | A same-model retry was measured to change nothing (2.6). One quoted retry on a stronger model is the cheapest version that could help. |
+| An explicit `unreadable_document` failure | Returning the model's best guess | A confident-looking invented invoice is worse than an honest "could not read this" (section 5). |
+| Error codes turned into plain language in one module (`explain.py`) | Showing raw exceptions or codes | A finance user needs to know what to do next. A test fails if any error code the code can raise has no explanation. |
+| SQLite for the upload history | PostgreSQL or MongoDB, or one JSON file per upload | SQLite is built into Python, so there is nothing to install or run; it is one file, handles concurrent writes safely and holds thousands of records. A shared multi-user deployment would move to PostgreSQL. |
+| One HTML file served by the API | A React or Next.js app | Nothing to install or build: the client opens a URL. Document text is inserted as text, never as HTML, so a malicious document cannot inject script. |
+| Tolerant matching for names, strict for numbers and dates | Exact matching everywhere | "Acme Pvt Ltd" and "Acme" are the same vendor to a finance team, but 1,200.00 and 1,200.01 are not the same amount (section 3). |
+
 ## 3. How correctness is measured
 
 Matching rules, implemented in `invoice_extractor/matching.py` and unit tested:
@@ -319,7 +341,8 @@ document, 10,000 invoices cost about $14. Running the stronger model on every do
   They are kept out of the output JSON because the assignment's `schema.json` forbids extra keys, so they live in `outputs/_run_log.json` (and in each JSON with
   `--with-review`). How well they separate wrong documents from right ones is in section 5.
 - **Frontend.** `python -m uvicorn server:app --port 8000`. Upload a document and see it next to the extracted fields, the totals check, the review reasons and the
-  cost of each model call.
+  cost of each model call. Every upload is saved to a local history (SQLite plus the original file, under the git-ignored `data/history/`), which can be searched,
+  filtered by result, reopened and deleted. A failed upload shows what happened, why, and what to do, in plain language instead of an error code.
 
 ## 8. Known limitations
 

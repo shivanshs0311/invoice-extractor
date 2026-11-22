@@ -28,14 +28,22 @@
   [hidden] { display: none !important; } /* author display rules (flex, grid) would otherwise beat the hidden attribute */
   html { color-scheme: light; }
   body { margin: 0; background: var(--desk); color: var(--ink); font: 15px/1.5 var(--sans); font-variant-numeric: tabular-nums; }
-  header { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; padding: 14px 24px; border-bottom: 1px solid var(--rule); background: var(--paper); }
+
+  header { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; padding: 10px 24px; border-bottom: 1px solid var(--rule); background: var(--paper); }
   header h1 { margin: 0; font: 600 20px/1 var(--serif); letter-spacing: .01em; }
+  nav { display: flex; gap: 4px; }
+  nav a { padding: 7px 14px; border-radius: 3px; color: var(--muted); text-decoration: none; font-weight: 500; }
+  nav a:hover { color: var(--ink); background: var(--desk); }
+  nav a[aria-current="page"] { color: var(--green); background: var(--green-soft); }
+  .count { display: inline-block; min-width: 20px; margin-left: 6px; padding: 0 6px; border-radius: 10px; background: var(--rule); color: var(--ink); font-size: 12px; text-align: center; }
   #config { color: var(--muted); font-size: 13px; }
+
   main { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); gap: 20px; padding: 20px 24px 40px; max-width: 1280px; margin: 0 auto; }
-  @media (max-width: 900px) { main { grid-template-columns: 1fr; padding: 14px; } header { padding: 12px 14px; } }
+  @media (max-width: 900px) { main { grid-template-columns: 1fr; padding: 14px; } header { padding: 10px 14px; } }
 
   .pane { background: var(--paper); border: 1px solid var(--rule); border-radius: 4px; min-height: 420px; }
   .pane-title { margin: 0; padding: 10px 16px; border-bottom: 1px solid var(--rule); font-size: 13px; font-weight: 600; color: var(--muted); display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+  .pane-title .btn { margin: 0; }
 
   /* Left: drop zone and preview */
   #drop { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; min-height: 520px; margin: 16px; border: 1.5px dashed var(--rule); border-radius: 4px; text-align: center; padding: 24px; cursor: pointer; transition: background-color .15s, border-color .15s; }
@@ -44,13 +52,16 @@
   #drop span { color: var(--muted); }
   #drop .btn { color: #fff; }
   #file { position: absolute; width: 1px; height: 1px; opacity: 0; overflow: hidden; }
-  .btn { appearance: none; border: 1px solid var(--green); background: var(--green); color: #fff; font: 500 14px var(--sans); padding: 8px 14px; border-radius: 3px; cursor: pointer; }
+  .btn { appearance: none; border: 1px solid var(--green); background: var(--green); color: #fff; font: 500 14px var(--sans); padding: 8px 14px; border-radius: 3px; cursor: pointer; text-decoration: none; display: inline-block; }
   .btn.ghost { background: transparent; color: var(--green); }
-  .btn:focus-visible, summary:focus-visible, a:focus-visible, #drop:focus-within { outline: 2px solid var(--green); outline-offset: 2px; }
+  .btn.small { padding: 4px 10px; font-size: 13px; }
+  .btn.danger { border-color: var(--red); color: var(--red); background: transparent; }
+  .btn.danger.armed { background: var(--red); color: #fff; }
+  .btn:focus-visible, summary:focus-visible, a:focus-visible, input:focus-visible, #drop:focus-within { outline: 2px solid var(--green); outline-offset: 2px; }
   #preview { padding: 12px; }
   #preview iframe, #preview img { width: 100%; height: 640px; border: 1px solid var(--rule); border-radius: 3px; background: #f4f6f8; display: block; }
   #preview img { object-fit: contain; }
-  #preview .fallback { margin: 8px 2px 0; color: var(--muted); font-size: 13px; }
+  .fallback { margin: 8px 2px 0; color: var(--muted); font-size: 13px; }
 
   /* Right: ledger */
   .ledger { padding: 0 0 8px; }
@@ -62,16 +73,25 @@
   @keyframes slide { from { transform: translateX(-100%); } to { transform: translateX(300%); } }
   @media (prefers-reduced-motion: reduce) { .bar i { animation: none; width: 100%; opacity: .5; } #drop { transition: none; } }
 
+  .saved { padding: 8px 20px; font-size: 13px; color: var(--muted); border-bottom: 1px solid var(--rule); background: #f7f9fa; }
   .verdict { padding: 18px 20px 10px; background: var(--paper); border-bottom: 1px solid var(--rule); }
   .verdict h2 { margin: 0; font: 600 26px/1.2 var(--serif); overflow-wrap: anywhere; }
   .verdict .sub { color: var(--muted); margin-top: 4px; display: flex; flex-wrap: wrap; gap: 4px 18px; }
   .stamp { margin: 12px 0 8px; padding: 10px 12px; border: 1.5px solid; border-radius: 3px; }
   .stamp.ok { color: var(--green); background: var(--green-soft); border-color: var(--green); }
   .stamp.review { color: var(--amber); background: var(--amber-soft); border-color: var(--amber); }
-  .stamp.fail { color: var(--red); background: var(--red-soft); border-color: var(--red); }
   .stamp b { display: block; font-weight: 600; }
   .stamp ul { margin: 4px 0 0; padding-left: 18px; }
   .stamp p { margin: 2px 0 0; }
+
+  /* Failure card: what happened, why, what to do */
+  .problem { border: 1.5px solid var(--red); border-radius: 4px; background: var(--red-soft); padding: 16px 18px; }
+  .problem h2 { margin: 0 0 10px; font: 600 24px/1.2 var(--serif); color: var(--red); }
+  .problem h3 { margin: 12px 0 2px; font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); }
+  .problem p { margin: 0; color: var(--ink); }
+  .problem .tech { margin-top: 12px; font-size: 13px; color: var(--muted); }
+  .problem .tech summary { padding: 0; font-weight: 500; }
+  .problem .tech code { display: block; margin-top: 4px; white-space: pre-wrap; overflow-wrap: anywhere; font: 12px/1.45 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
 
   dl.fields { margin: 0; padding: 0 20px; background: var(--paper); }
   dl.fields > div { display: grid; grid-template-columns: 22px 150px 1fr; align-items: baseline; min-height: 36px; padding: 6px 0; border-bottom: 1px solid var(--ledger); }
@@ -95,26 +115,62 @@
   .tape .verdict-line { font-size: 13px; margin-top: 4px; }
   .tape .good { color: var(--green); } .tape .bad { color: var(--red); }
 
-  details { margin: 16px 20px 0; background: var(--paper); border: 1px solid var(--rule); border-radius: 3px; }
+  details.more { margin: 16px 20px 0; background: var(--paper); border: 1px solid var(--rule); border-radius: 3px; }
   summary { cursor: pointer; padding: 8px 12px; font-weight: 500; }
-  details .body { padding: 4px 12px 12px; font-size: 13px; color: var(--muted); }
-  details table { width: 100%; border-collapse: collapse; margin-top: 6px; }
-  details th, details td { text-align: left; padding: 3px 8px 3px 0; border-bottom: 1px solid var(--rule); }
-  details td.num { text-align: right; }
+  details.more .body { padding: 4px 12px 12px; font-size: 13px; color: var(--muted); }
+  details.more table { width: 100%; border-collapse: collapse; margin-top: 6px; }
+  details.more th, details.more td { text-align: left; padding: 3px 8px 3px 0; border-bottom: 1px solid var(--rule); }
+  details.more td.num { text-align: right; }
   pre { margin: 8px 0 0; padding: 10px; max-height: 320px; overflow: auto; background: #f4f6f8; border: 1px solid var(--rule); font: 12px/1.45 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; color: var(--ink); }
-  .actions { display: flex; gap: 8px; margin-top: 8px; }
-  #again { margin: 18px 20px 4px; }
+  .actions { display: flex; flex-wrap: wrap; gap: 8px; margin: 16px 20px 4px; }
+
+  /* History */
+  #history-view { max-width: 1280px; margin: 0 auto; padding: 20px 24px 40px; }
+  @media (max-width: 900px) { #history-view { padding: 14px; } }
+  .toolbar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; padding: 12px 16px; border-bottom: 1px solid var(--rule); }
+  .toolbar input { flex: 1 1 220px; padding: 7px 10px; border: 1px solid var(--rule); border-radius: 3px; font: inherit; }
+  .filters { display: flex; gap: 4px; flex-wrap: wrap; }
+  .filters button { appearance: none; border: 1px solid var(--rule); background: var(--paper); color: var(--muted); font: 500 13px var(--sans); padding: 5px 10px; border-radius: 14px; cursor: pointer; }
+  .filters button[aria-pressed="true"] { border-color: var(--green); color: var(--green); background: var(--green-soft); }
+  table.history { width: 100%; border-collapse: collapse; }
+  table.history th { text-align: left; font-size: 13px; font-weight: 500; color: var(--muted); padding: 8px 12px; border-bottom: 1px solid var(--ink); }
+  table.history td { padding: 10px 12px; border-bottom: 1px solid var(--ledger); vertical-align: top; }
+  table.history tr.row { cursor: pointer; }
+  table.history tr.row:hover td { background: #f7f9fa; }
+  table.history .num { text-align: right; white-space: nowrap; }
+  table.history .what b { display: block; font-weight: 500; overflow-wrap: anywhere; }
+  table.history .what span { color: var(--muted); font-size: 13px; }
+  table.history .when { white-space: nowrap; color: var(--muted); font-size: 13px; }
+  table.history .file { overflow-wrap: anywhere; }
+  table.history .act { white-space: nowrap; text-align: right; }
+  .chip { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 12px; font-weight: 600; white-space: nowrap; }
+  .chip.ok { color: var(--green); background: var(--green-soft); }
+  .chip.needs_review { color: var(--amber); background: var(--amber-soft); }
+  .chip.failed { color: var(--red); background: var(--red-soft); }
+  .none { padding: 40px 20px; text-align: center; color: var(--muted); }
+  @media (max-width: 700px) {
+    table.history thead { display: none; }
+    table.history tr.row { display: grid; grid-template-columns: 1fr auto; grid-template-areas: "res st" "file total" "when act"; gap: 4px 12px; padding: 12px; border-bottom: 1px solid var(--ledger); }
+    table.history td { padding: 0; border: 0; }
+    table.history .res { grid-area: res; } table.history .st { grid-area: st; text-align: right; }
+    table.history .file { grid-area: file; color: var(--muted); font-size: 13px; } table.history .num { grid-area: total; }
+    table.history .when { grid-area: when; } table.history .act { grid-area: act; }
+  }
 </style>
 </head>
 <body>
 <header>
   <h1>Invoice desk</h1>
+  <nav aria-label="Views">
+    <a href="#" id="nav-check">Check a document</a>
+    <a href="#history" id="nav-history">History<span class="count" id="count">0</span></a>
+  </nav>
   <div id="config" aria-live="polite"></div>
 </header>
 
-<main>
+<main id="check-view">
   <section class="pane" aria-label="Document">
-    <h2 class="pane-title"><span>Document</span><button id="again" class="btn ghost" type="button" hidden>Check another file</button></h2>
+    <h2 class="pane-title"><span id="doc-title">Document</span><button id="again" class="btn ghost small" type="button" hidden>Check another file</button></h2>
     <label id="drop">
       <input id="file" type="file" accept=".pdf,.png,.jpg,.jpeg,.webp,.tif,.tiff,.bmp,application/pdf,image/*">
       <strong>Drop an invoice here</strong>
@@ -126,28 +182,38 @@
 
   <section class="pane" aria-label="Extracted fields" aria-live="polite">
     <h2 class="pane-title"><span>Extracted fields</span></h2>
-    <div id="result" class="ledger">
-      <div class="empty">
-        <p>Upload a document and the fields appear here, next to the original.</p>
-        <p>Every result is checked: the line items plus tax must add up to the total. Anything that does not is marked for review instead of passed on.</p>
-      </div>
-    </div>
+    <div id="result" class="ledger"></div>
   </section>
 </main>
+
+<section id="history-view" hidden aria-label="History">
+  <div class="pane">
+    <div class="toolbar">
+      <input id="search" type="search" placeholder="Search by file, vendor or invoice number" aria-label="Search history">
+      <div class="filters" role="group" aria-label="Filter by result">
+        <button type="button" data-filter="all" aria-pressed="true">All</button>
+        <button type="button" data-filter="ok" aria-pressed="false">Passed</button>
+        <button type="button" data-filter="needs_review" aria-pressed="false">Needs review</button>
+        <button type="button" data-filter="failed" aria-pressed="false">Failed</button>
+      </div>
+    </div>
+    <div id="history-list"></div>
+  </div>
+</section>
 
 <script>
 (() => {
   "use strict";
   const $ = (s) => document.querySelector(s);
   const result = $("#result"), drop = $("#drop"), input = $("#file"), preview = $("#preview"), again = $("#again");
-  let maxMb = 20, objectUrl = null, timer = null;
+  const STATUS = { ok: "Passed", needs_review: "Needs review", failed: "Failed" };
+  let maxMb = 20, objectUrl = null, timer = null, items = [], filter = "all";
 
   function el(tag, attrs = {}, ...kids) {
     const node = document.createElement(tag);
     for (const [k, v] of Object.entries(attrs)) {
       if (v == null || v === false) continue;
       if (k === "class") node.className = v;
-      else if (k === "text") node.textContent = v;
       else if (k.startsWith("on")) node.addEventListener(k.slice(2), v);
       else node.setAttribute(k, v === true ? "" : v);
     }
@@ -155,95 +221,122 @@
     return node; // all content goes in as text nodes, never as HTML, because document text is untrusted
   }
 
-  const REASONS = {
-    totals_reconcile: "The line items plus tax do not add up to the total.",
-    totals_unverifiable: "The total could not be checked because line items or the total are missing.",
-    core_fields_present: "A required field (vendor, invoice number, date, total or line items) was not found.",
-    document_type_consistent: "The document type and the invoice flag disagree.",
-    currency_known: "The currency is missing or not a recognised code.",
-    date_plausible: "The invoice date looks implausible.",
-    tax_plausible: "The tax amount looks implausible next to the total.",
-    legibility_good: "The document was hard to read.",
-    confidence_ok: "The model reported low confidence.",
-    input_quality_ok: "Input quality issue: low resolution or pages were cut off.",
-    non_invoice_fields_null: "The model returned invoice fields for a non-invoice. They were cleared."
-  };
-  const FAILS = {
-    corrupt_file: "The file is damaged and cannot be opened. Export it again from the source.",
-    empty_file: "The file is empty.",
-    encrypted_pdf: "The PDF is password protected. Remove the password and upload it again.",
-    blank_document: "The page looks blank. Check that the scan captured the document.",
-    unsupported_type: "This file type is not supported. Use PDF, JPG, PNG or WEBP.",
-    file_too_large: "The file is over the size limit.",
-    api_auth: "The server has no valid API key. Set GEMINI_API_KEY in .env and restart.",
-    api_quota: "The daily free-tier quota for this model is used up. It resets at midnight Pacific time.",
-    api_server_error: "The model service is overloaded right now. Try again in a minute.",
-    unreadable_document: "The scan is too poor to read reliably. Send a clearer scan or photo.",
-    api_timeout: "The model took too long to answer. Try again.",
-    api_rate_limit: "The model service is rate limiting requests. Wait a moment and try again.",
-    api_connection: "The server could not reach the model service."
-  };
-
   const fmt = (n, cur) => (n == null ? "" : new Intl.NumberFormat(cur === "INR" ? "en-IN" : "en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(n));
   const usd = (n) => (n == null ? "n/a" : "$" + (n < 0.1 ? n.toFixed(5) : n.toFixed(3)));
+  const when = (iso) => new Date(iso).toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short" });
+  const chip = (status) => el("span", { class: "chip " + status }, STATUS[status] || status);
+
+  async function api(path, options) {
+    const res = await fetch(path, options);
+    const body = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(body.detail || "The server answered with error " + res.status + ".");
+    return body;
+  }
 
   fetch("/api/health").then((r) => r.json()).then((h) => {
     maxMb = h.max_file_mb; $("#limit").textContent = String(maxMb);
-    $("#config").textContent = h.model + (h.escalation_model ? ", then " + h.escalation_model + " when a check fails" : "") + " | mode " + h.mode;
-  }).catch(() => { $("#config").textContent = "Server not reachable"; });
+    $("#config").textContent = h.model + (h.escalation_model ? ", then " + h.escalation_model + " when a check fails" : "");
+  }).catch(() => { $("#config").textContent = "Server not reachable. Is it still running?"; });
 
-  function showPreview(file) {
-    if (objectUrl) URL.revokeObjectURL(objectUrl);
-    objectUrl = URL.createObjectURL(file);
-    const isPdf = file.type === "application/pdf" || /\.pdf$/i.test(file.name);
+  /* ---------- Views and routing: #history, #record/12, or the upload page ---------- */
+  function route() {
+    const hash = location.hash;
+    const onHistory = hash === "#history";
+    $("#check-view").hidden = onHistory;
+    $("#history-view").hidden = !onHistory;
+    $("#nav-history").setAttribute("aria-current", onHistory ? "page" : "false");
+    $("#nav-check").setAttribute("aria-current", onHistory ? "false" : "page");
+    const match = hash.match(/^#record\/(\d+)$/);
+    if (onHistory) loadHistory();
+    else if (match) openRecord(Number(match[1]));
+    else if (!hash) reset();
+  }
+
+  /* ---------- Left pane ---------- */
+  function showPreview(src, name, isPdf) {
     preview.replaceChildren(
-      isPdf ? el("iframe", { src: objectUrl, title: "Uploaded document" }) : el("img", { src: objectUrl, alt: "Uploaded document" }),
-      el("p", { class: "fallback" }, "If the preview is blank, ", el("a", { href: objectUrl, target: "_blank", rel: "noopener" }, "open the file in a new tab"), ".")
+      isPdf ? el("iframe", { src, title: "Document: " + name }) : el("img", { src, alt: "Document: " + name }),
+      el("p", { class: "fallback" }, "If the preview is blank, ", el("a", { href: src, target: "_blank", rel: "noopener" }, "open the file in a new tab"), ".")
     );
+    $("#doc-title").textContent = name;
     drop.hidden = true; preview.hidden = false; again.hidden = false;
   }
 
   function reset() {
     clearInterval(timer);
+    if (objectUrl) { URL.revokeObjectURL(objectUrl); objectUrl = null; }
     drop.hidden = false; preview.hidden = true; again.hidden = true; input.value = "";
-    result.replaceChildren(el("div", { class: "empty" }, el("p", {}, "Upload a document and the fields appear here, next to the original.")));
+    $("#doc-title").textContent = "Document";
+    result.replaceChildren(el("div", { class: "empty" },
+      el("p", {}, "Upload a document and the fields appear here, next to the original."),
+      el("p", {}, "Every result is checked: the line items plus tax must add up to the total. Anything that does not is marked for review instead of passed on."),
+      el("p", {}, "Every upload is saved, so you can find it again under History.")));
   }
 
+  /* ---------- Upload ---------- */
   function loading() {
     const t = el("span", {}, "0s"); const started = Date.now();
     clearInterval(timer);
     timer = setInterval(() => { t.textContent = Math.round((Date.now() - started) / 1000) + "s"; }, 500);
-    result.replaceChildren(el("div", { class: "loading" }, el("strong", {}, "Reading the document"), el("div", {}, "Elapsed ", t), el("div", { class: "bar" }, el("i"))));
+    result.replaceChildren(el("div", { class: "loading" }, el("strong", {}, "Reading the document"), el("div", {}, "Usually 3 to 15 seconds. Elapsed ", t), el("div", { class: "bar" }, el("i"))));
   }
 
-  function failure(title, message) {
+  function problem(title, why, fix, technical) {
     clearInterval(timer);
-    result.replaceChildren(el("div", { class: "failure" }, el("div", { class: "stamp fail" }, el("b", {}, title), el("p", {}, message))));
+    return el("div", { class: "failure" }, el("div", { class: "problem", role: "alert" },
+      el("h2", {}, title),
+      el("h3", {}, "What happened"), el("p", {}, why),
+      el("h3", {}, "What you can do"), el("p", {}, fix),
+      technical ? el("details", { class: "tech" }, el("summary", {}, "Technical details"), el("code", {}, technical)) : null));
   }
 
-  async function handle(file) {
+  async function upload(file) {
     if (!file) return;
-    if (file.size > maxMb * 1024 * 1024) { failure("File is too large", "The limit is " + maxMb + " MB."); return; }
-    showPreview(file); loading();
-    const body = new FormData(); body.append("file", file);
-    try {
-      const res = await fetch("/api/extract", { method: "POST", body });
-      if (!res.ok) { const e = await res.json().catch(() => ({})); throw new Error(e.detail || "Server returned " + res.status); }
-      render(await res.json());
-    } catch (err) { failure("Could not read the document", err.message); }
-  }
-
-  function render({ output, meta }) {
-    clearInterval(timer);
-    const failed = meta.status === "failed";
-    if (failed) {
-      const e = output.error || {};
-      result.replaceChildren(el("div", { class: "failure" }, el("div", { class: "stamp fail" }, el("b", {}, "Extraction failed"), el("p", {}, FAILS[e.code] || e.message || "Unknown error."), el("p", {}, e.message && FAILS[e.code] ? e.message : ""))), runDetails(output, meta));
+    if (file.size > maxMb * 1024 * 1024) {
+      result.replaceChildren(problem("File is too large", "The limit is " + maxMb + " MB, and this file is " + (file.size / 1048576).toFixed(1) + " MB.", "Compress the PDF or upload only the invoice pages."));
       return;
     }
-    const cur = output.currency;
-    const nodes = [];
+    if (objectUrl) URL.revokeObjectURL(objectUrl);
+    objectUrl = URL.createObjectURL(file);
+    showPreview(objectUrl, file.name, file.type === "application/pdf" || /\.pdf$/i.test(file.name));
+    loading();
+    const body = new FormData(); body.append("file", file);
+    try {
+      const record = await api("/api/extract", { method: "POST", body });
+      history.replaceState(null, "", "#record/" + record.id);
+      render(record);
+      refreshCount();
+    } catch (err) {
+      result.replaceChildren(problem("Could not reach the server", "The page could not get an answer from the extraction server.", "Check that the server window is still open, then try again.", err.message));
+    }
+  }
 
+  /* ---------- One record (fresh upload or from history) ---------- */
+  async function openRecord(id) {
+    try {
+      const record = await api("/api/history/" + id);
+      const fileUrl = "/api/history/" + id + "/file";
+      showPreview(fileUrl, record.filename, /\.pdf$/i.test(record.filename));
+      render(record);
+    } catch (err) {
+      reset();
+      result.replaceChildren(problem("Record not found", "This record is not in the history. It may have been deleted.", "Open History to see what is stored.", err.message));
+    }
+  }
+
+  function render(record) {
+    clearInterval(timer);
+    const { output, meta, failure, review } = record;
+    const nodes = [el("div", { class: "saved" }, "Saved to history as #" + record.id + " on " + when(record.created_at) + ".")];
+
+    if (failure) {
+      nodes.push(problem(failure.title, failure.why, failure.fix, failure.code + ": " + (failure.detail || "")));
+      nodes.push(details(record));
+      result.replaceChildren(...nodes);
+      return;
+    }
+
+    const cur = output.currency;
     const head = el("div", { class: "verdict" });
     if (output.is_invoice) {
       head.append(el("h2", {}, output.vendor || "Vendor not found"));
@@ -253,27 +346,27 @@
       head.append(el("div", { class: "sub" }, el("span", {}, "Looks like: " + (meta.document_type || "other").replace("_", " "))));
     }
     if (output.needs_review) {
-      head.append(el("div", { class: "stamp review" }, el("b", {}, "Needs review"), el("ul", {}, (output.review_reasons || []).map((c) => el("li", {}, REASONS[c] || c)))));
+      head.append(el("div", { class: "stamp review" }, el("b", {}, "Needs a human check"), el("ul", {}, (review || []).map((r) => el("li", {}, r)))));
     } else {
-      head.append(el("div", { class: "stamp ok" }, el("b", {}, "Passed all checks"), el("p", {}, output.is_invoice ? "Schema valid, and line items plus tax equal the total." : "Not an invoice, so no fields were extracted.")));
+      head.append(el("div", { class: "stamp ok" }, el("b", {}, "Passed all checks"), el("p", {}, output.is_invoice ? "The format is valid, and the line items plus tax equal the total." : "This is not an invoice, so no invoice fields were extracted.")));
     }
-    if (meta.notes) head.append(el("p", { class: "fallback" }, "Model note: " + meta.notes));
+    if (meta.notes) head.append(el("p", { class: "fallback" }, "Note from the reader: " + meta.notes));
     nodes.push(head);
 
     if (output.is_invoice) {
       const rows = [["Vendor", output.vendor], ["Invoice number", output.invoice_number], ["Invoice date", output.invoice_date], ["Currency", output.currency], ["Tax total", output.tax_total == null ? null : fmt(output.tax_total, cur)], ["Total", output.total == null ? null : fmt(output.total, cur)]];
-      nodes.push(el("dl", { class: "fields" }, rows.map(([k, v]) => el("div", {}, el("span", { class: "mark" + (v == null && k !== "Tax total" ? " bad" : ""), "aria-hidden": "true" }, v == null ? (k === "Tax total" ? "" : "!") : "\u2713"), el("dt", {}, k), el("dd", {}, v == null ? el("span", { class: "missing" }, k === "Tax total" ? "none shown" : "not found") : v)))));
+      nodes.push(el("dl", { class: "fields" }, rows.map(([k, v]) => el("div", {}, el("span", { class: "mark" + (v == null && k !== "Tax total" ? " bad" : ""), "aria-hidden": "true" }, v == null ? (k === "Tax total" ? "" : "!") : "✓"), el("dt", {}, k), el("dd", {}, v == null ? el("span", { class: "missing" }, k === "Tax total" ? "none shown" : "not found") : v)))));
 
-      const items = output.line_items || [];
-      nodes.push(el("div", { class: "section" }, "Line items (" + items.length + ")"));
+      const lines = output.line_items || [];
+      nodes.push(el("div", { class: "section" }, "Line items (" + lines.length + ")"));
       nodes.push(el("table", { class: "items" },
         el("thead", {}, el("tr", {}, el("th", {}, "Description"), el("th", { class: "num" }, "Qty"), el("th", { class: "num" }, "Amount"))),
-        el("tbody", {}, items.map((it) => el("tr", {}, el("td", {}, it.description), el("td", { class: "num" }, it.quantity == null ? "" : String(it.quantity)), el("td", { class: "num" + (it.amount < 0 ? " neg" : "") }, fmt(it.amount, cur)))))));
+        el("tbody", {}, lines.map((it) => el("tr", {}, el("td", {}, it.description), el("td", { class: "num" }, it.quantity == null ? "" : String(it.quantity)), el("td", { class: "num" + (it.amount < 0 ? " neg" : "") }, fmt(it.amount, cur)))))));
 
-      if (items.length && output.total != null) {
-        const sum = items.reduce((a, b) => a + b.amount, 0), tax = output.tax_total || 0, calc = sum + tax, diff = Math.abs(calc - output.total);
+      if (lines.length && output.total != null) {
+        const sum = lines.reduce((a, b) => a + b.amount, 0), tax = output.tax_total || 0, calc = sum + tax, diff = Math.abs(calc - output.total);
         const check = (meta.checks || []).find((c) => c.name === "totals_reconcile");
-        const good = check ? check.ok : diff <= 1;
+        const good = check ? check.ok : diff <= 0.05;
         nodes.push(el("div", { class: "section" }, "Does it add up?"));
         nodes.push(el("div", { class: "tape" },
           el("div", { class: "row" }, el("span", {}, "Line items"), el("span", {}, fmt(sum, cur))),
@@ -283,30 +376,96 @@
           el("div", { class: "verdict-line " + (good ? "good" : "bad") }, good ? "Matches." : "Off by " + fmt(diff, cur) + ".")));
       }
     }
-    nodes.push(runDetails(output, meta));
+    nodes.push(details(record));
     result.replaceChildren(...nodes);
   }
 
-  function runDetails(output, meta) {
-    const attempts = (meta.attempts || []).map((a) => el("tr", {}, el("td", {}, String(a.attempt)), el("td", {}, a.mode + " / " + a.model), el("td", {}, a.status + (a.failed_checks && a.failed_checks.length ? " (" + a.failed_checks.join(", ") + ")" : "")), el("td", { class: "num" }, (a.input_tokens || 0).toLocaleString() + " / " + (a.output_tokens || 0).toLocaleString()), el("td", { class: "num" }, usd(a.cost_usd))));
+  function details(record) {
+    const { output, meta } = record;
     const json = JSON.stringify(output, null, 2);
+    const name = record.filename.replace(/\.[^.]+$/, "") + ".json";
+    const attempts = (meta.attempts || []).map((a) => el("tr", {}, el("td", {}, String(a.attempt)), el("td", {}, a.mode + " / " + a.model), el("td", {}, a.status + (a.failed_checks && a.failed_checks.length ? " (" + a.failed_checks.join(", ") + ")" : "")), el("td", { class: "num" }, (a.input_tokens || 0).toLocaleString() + " / " + (a.output_tokens || 0).toLocaleString()), el("td", { class: "num" }, usd(a.cost_usd))));
     return el("div", {},
-      el("details", {}, el("summary", {}, "How it was read"), el("div", { class: "body" },
+      record.failure ? null : el("div", { class: "actions" },
+        el("button", { class: "btn ghost small", type: "button", onclick: () => { const a = el("a", { href: URL.createObjectURL(new Blob([json], { type: "application/json" })), download: name }); a.click(); } }, "Download JSON"),
+        el("button", { class: "btn ghost small", type: "button", onclick: (e) => { navigator.clipboard.writeText(json).then(() => { e.target.textContent = "Copied"; setTimeout(() => { e.target.textContent = "Copy JSON"; }, 1500); }); } }, "Copy JSON")),
+      el("details", { class: "more" }, el("summary", {}, "How it was read"), el("div", { class: "body" },
         el("div", {}, "Source: " + (meta.source_type || "n/a") + ". Cost " + usd(meta.cost_usd) + " for " + (meta.input_tokens || 0).toLocaleString() + " tokens in and " + (meta.output_tokens || 0).toLocaleString() + " out. " + (meta.latency_s || 0).toFixed(1) + "s."),
         (meta.warnings || []).length ? el("div", {}, "Input warnings: " + meta.warnings.join(", ")) : null,
         attempts.length ? el("table", {}, el("thead", {}, el("tr", {}, el("th", {}, "#"), el("th", {}, "Route"), el("th", {}, "Result"), el("th", { class: "num" }, "Tokens in / out"), el("th", { class: "num" }, "Cost"))), el("tbody", {}, attempts)) : null)),
-      el("details", {}, el("summary", {}, "JSON"), el("div", { class: "body" },
-        el("div", { class: "actions" },
-          el("button", { class: "btn ghost", type: "button", onclick: (e) => { navigator.clipboard.writeText(json).then(() => { e.target.textContent = "Copied"; setTimeout(() => { e.target.textContent = "Copy JSON"; }, 1500); }); } }, "Copy JSON"),
-          el("button", { class: "btn ghost", type: "button", onclick: () => { const a = el("a", { href: URL.createObjectURL(new Blob([json], { type: "application/json" })), download: "invoice.json" }); a.click(); } }, "Download JSON")),
-        el("pre", {}, json))));
+      el("details", { class: "more" }, el("summary", {}, "JSON"), el("div", { class: "body" }, el("pre", {}, json))));
   }
 
-  input.addEventListener("change", () => handle(input.files[0]));
-  again.addEventListener("click", reset);
+  /* ---------- History ---------- */
+  async function refreshCount() {
+    try { items = (await api("/api/history")).items; $("#count").textContent = String(items.length); } catch { /* the header still works without a count */ }
+  }
+
+  async function loadHistory() {
+    $("#history-list").replaceChildren(el("div", { class: "none" }, "Loading history..."));
+    try { await refreshCount(); drawHistory(); }
+    catch (err) { $("#history-list").replaceChildren(el("div", { class: "none" }, "Could not load the history: " + err.message)); }
+  }
+
+  function describe(it) {
+    if (it.status === "failed") return el("div", { class: "what" }, el("b", {}, it.failure_title || "Could not be read"), el("span", {}, "No data extracted"));
+    if (!it.vendor && !it.invoice_number) return el("div", { class: "what" }, el("b", {}, "Not an invoice"), el("span", {}, "No invoice fields"));
+    return el("div", { class: "what" }, el("b", {}, it.vendor || "Vendor not found"), el("span", {}, it.invoice_number ? "Invoice " + it.invoice_number : "No invoice number"));
+  }
+
+  function drawHistory() {
+    const q = $("#search").value.trim().toLowerCase();
+    const shown = items.filter((it) => (filter === "all" || it.status === filter) &&
+      (!q || [it.filename, it.vendor, it.invoice_number].some((v) => v && v.toLowerCase().includes(q))));
+    if (!items.length) {
+      $("#history-list").replaceChildren(el("div", { class: "none" }, el("p", {}, "Nothing here yet."), el("a", { class: "btn", href: "#" }, "Check your first document")));
+      return;
+    }
+    if (!shown.length) { $("#history-list").replaceChildren(el("div", { class: "none" }, "No uploads match this search or filter.")); return; }
+    $("#history-list").replaceChildren(el("table", { class: "history" },
+      el("thead", {}, el("tr", {}, el("th", {}, "Uploaded"), el("th", {}, "File"), el("th", {}, "Result"), el("th", { class: "num" }, "Total"), el("th", {}, "Status"), el("th", {}, ""))),
+      el("tbody", {}, shown.map((it) => el("tr", { class: "row", tabindex: "0", onclick: () => { location.hash = "#record/" + it.id; }, onkeydown: (e) => { if (e.key === "Enter") location.hash = "#record/" + it.id; } },
+        el("td", { class: "when" }, when(it.created_at)),
+        el("td", { class: "file" }, it.filename),
+        el("td", { class: "res" }, describe(it)),
+        el("td", { class: "num" }, it.total == null ? "" : (it.currency ? it.currency + " " : "") + fmt(it.total, it.currency)),
+        el("td", { class: "st" }, chip(it.status)),
+        el("td", { class: "act" }, deleteButton(it)))))));
+  }
+
+  function deleteButton(it) {
+    const btn = el("button", { class: "btn danger small", type: "button", "aria-label": "Delete " + it.filename }, "Delete");
+    btn.addEventListener("click", async (e) => {
+      e.stopPropagation();
+      if (!btn.classList.contains("armed")) { // two clicks instead of a pop-up, so nothing is deleted by accident
+        btn.classList.add("armed"); btn.textContent = "Click again to delete";
+        setTimeout(() => { btn.classList.remove("armed"); btn.textContent = "Delete"; }, 4000);
+        return;
+      }
+      try { await api("/api/history/" + it.id, { method: "DELETE" }); await refreshCount(); drawHistory(); }
+      catch (err) { btn.textContent = "Could not delete"; }
+    });
+    return btn;
+  }
+
+  $("#search").addEventListener("input", drawHistory);
+  for (const b of document.querySelectorAll(".filters button")) {
+    b.addEventListener("click", () => {
+      filter = b.dataset.filter;
+      for (const other of document.querySelectorAll(".filters button")) other.setAttribute("aria-pressed", String(other === b));
+      drawHistory();
+    });
+  }
+
+  input.addEventListener("change", () => upload(input.files[0]));
+  again.addEventListener("click", () => { if (location.hash) location.hash = ""; else reset(); });
   for (const ev of ["dragenter", "dragover"]) drop.addEventListener(ev, (e) => { e.preventDefault(); drop.classList.add("over"); });
   for (const ev of ["dragleave", "drop"]) drop.addEventListener(ev, (e) => { e.preventDefault(); drop.classList.remove("over"); });
-  drop.addEventListener("drop", (e) => handle(e.dataTransfer.files[0]));
+  drop.addEventListener("drop", (e) => upload(e.dataTransfer.files[0]));
+  window.addEventListener("hashchange", route);
+
+  refreshCount();
+  route();
 })();
 </script>
 </body>

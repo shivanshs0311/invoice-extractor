@@ -16,6 +16,7 @@ from pathlib import Path
 
 from invoice_extractor.config import ROOT, VALID_MODES, load_settings
 from invoice_extractor.data_io import discover_documents
+from invoice_extractor.explain import explain_failure
 from invoice_extractor.llm import LLMError
 from invoice_extractor.pipeline import ExtractionResult, extract_document, extract_many
 
@@ -43,7 +44,8 @@ def _log_line(name: str, res: ExtractionResult) -> str:
     cost = res.meta.get("cost_usd")
     cost_txt = "n/a" if cost is None else f"${cost:.5f}"
     flag = " NEEDS REVIEW" if res.output.get("needs_review") else ""
-    err = f" error={res.meta['error']['code']}" if res.meta.get("error") else ""
+    code = (res.meta.get("error") or {}).get("code")
+    err = f" error={code} ({explain_failure(code)['title']})" if code else ""
     return (
         f"{name}: {res.status}{flag}{err} | {res.meta.get('source_type')} | "
         f"tokens {res.meta['input_tokens']:,}/{res.meta['output_tokens']:,} | {cost_txt} | {res.meta['latency_s']:.1f}s"
